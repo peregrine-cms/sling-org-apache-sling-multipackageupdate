@@ -4,8 +4,8 @@ import com.headwire.sling.update.PackagesListEndpoint;
 import com.headwire.sling.update.UpdatePackagesListener;
 import org.apache.commons.codec.Charsets;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.exception.ExceptionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.jackrabbit.vault.fs.api.ProgressTrackerListener;
 import org.apache.jackrabbit.vault.fs.io.ImportOptions;
 import org.apache.jackrabbit.vault.packaging.JcrPackage;
@@ -58,7 +58,7 @@ public final class UpdatePackagesThread extends Thread implements ProgressTracke
 		} catch (final IOException | RepositoryException | PackageException e) {
 			final String msg = "Unable to update packages from " + endpoint.getPackagesListUrl();
 			logger.error(msg, e);
-			status += msg + "\n" + ExceptionUtils.getFullStackTrace(e);
+			status += msg + "\n" + ExceptionUtils.getStackTrace(e);
 		}
 
 		listener.notifyPackagesUpdated(status);
@@ -104,7 +104,7 @@ public final class UpdatePackagesThread extends Thread implements ProgressTracke
 
 	@Override
 	public void onError(final Mode mode, final String path, final Exception e) {
-		status += "[ERROR] " + path + "\n" + ExceptionUtils.getFullStackTrace(e) + "\n";
+		status += "[ERROR] " + path + "\n" + ExceptionUtils.getStackTrace(e) + "\n";
 	}
 
 	public String getStatus() {

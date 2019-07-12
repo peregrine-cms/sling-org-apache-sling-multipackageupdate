@@ -55,7 +55,6 @@
 						<Bundle-SymbolicName>${project.groupId}.${project.parent.artifactId}</Bundle-SymbolicName>
 						<Embed-Dependency>*;scope=compile</Embed-Dependency>
 						<Embed-Transitive>true</Embed-Transitive>
-						<Sling-Model-Packages>org.apache.sling.com.geadwire.github.comps</Sling-Model-Packages>
 						<_dsannotations>*</_dsannotations>
 						<_metatypeannotations>*</_metatypeannotations>
 						<_removeheaders>
@@ -217,21 +216,8 @@
 		</dependency>
 
 		<dependency>
-			<groupId>commons-lang</groupId>
-			<artifactId>commons-lang</artifactId>
-		</dependency>
-		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-lang3</artifactId>
-		</dependency>
-
-		<dependency>
-			<groupId>com.github.scribejava</groupId>
-			<artifactId>scribejava-apis</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.eclipse.mylyn.github</groupId>
-			<artifactId>org.eclipse.egit.github.core</artifactId>
 		</dependency>
 
 		<dependency>
@@ -243,7 +229,7 @@
 		<dependency>
 			<groupId>commons-codec</groupId>
 			<artifactId>commons-codec</artifactId>
-			<version>1.11</version>
+			<version>1.9</version>
 			<scope>provided</scope>
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/commons-io/commons-io -->
@@ -257,7 +243,7 @@
 		<dependency>
 			<groupId>org.apache.jackrabbit.vault</groupId>
 			<artifactId>org.apache.jackrabbit.vault</artifactId>
-			<version>3.2.4</version>
+			<version>3.1.30</version>
 			<scope>provided</scope>
 		</dependency>
 

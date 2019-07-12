@@ -2,8 +2,8 @@ package com.headwire.sling.update.impl;
 
 import com.headwire.sling.update.PackagesListEndpoint;
 import com.headwire.sling.update.UpdatePackagesListener;
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.exception.ExceptionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.SlingHttpServletResponse;
 import org.apache.sling.api.servlets.SlingAllMethodsServlet;
@@ -100,7 +100,7 @@ public final class UpdatePackagesServlet extends SlingAllMethodsServlet implemen
             return "Update process started just now.";
         } catch (final RepositoryException e) {
             logger.error(UNABLE_TO_OBTAIN_SESSION, e);
-            return UNABLE_TO_OBTAIN_SESSION + "\n" + ExceptionUtils.getFullStackTrace(e);
+            return UNABLE_TO_OBTAIN_SESSION + "\n" + ExceptionUtils.getStackTrace(e);
         }
     }
 
