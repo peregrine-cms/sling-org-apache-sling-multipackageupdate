@@ -38,15 +38,19 @@ public final class UpdatePackagesServlet extends SlingAllMethodsServlet implemen
     private final Logger logger = LoggerFactory.getLogger(getClass());
     private final Object lock = logger;
 
-    @Activate
-    private UpdatePackagesServletConfig config;
-
     @Reference
     private SlingRepository repository;
+
+    private UpdatePackagesServletConfig config;
 
     private UpdatePackagesThread currentThread;
 
     private String lastStatus = "No previous status available.";
+
+    @Activate
+    public void activate(final UpdatePackagesServletConfig config) {
+        this.config = config;
+    }
 
     @Override
     protected void doGet(final SlingHttpServletRequest request, final SlingHttpServletResponse response)
