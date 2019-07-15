@@ -74,7 +74,7 @@
 								</embedded>
 							</embeddeds>
 							<properties>
-								<acHandling>Overwrite</acHandling>
+								<acHandling>MERGE_PRESERVE</acHandling>
 							</properties>
 						</configuration>
 					</execution>
