@@ -1,5 +1,0 @@
-<jcr:root xmlns:jcr="http://www.jcp.org/jcr/1.0" xmlns:rep="internal"
-          jcr:primaryType="rep:SystemUser"
-          jcr:uuid="51547cef-cf85-3b28-8af4-b5d6c38b7d4b"
-          rep:authorizableId="hw-updater"
-          rep:principalName="hw-updater" />

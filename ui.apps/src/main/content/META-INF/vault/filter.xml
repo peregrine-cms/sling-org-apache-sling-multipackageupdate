@@ -36,9 +36,9 @@
     <filter root="/apps/multipackageupdate">
         <exclude pattern="/apps/multipackageupdate/install/.*" />
     </filter>
-    <filter root="/home/users/system/hw-updater" />
+    <filter root="/home/users/system/sling-multipackageupdate" />
     <filter root="/rep:policy">
-        <include pattern="/rep:policy/hw-updater" />
+        <include pattern="/rep:policy/sling-multipackageupdate" />
         <exclude pattern="/rep:policy/.*" />
     </filter>
 </workspaceFilter>

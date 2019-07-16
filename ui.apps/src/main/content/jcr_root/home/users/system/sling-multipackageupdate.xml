@@ -1,0 +1,5 @@
+<jcr:root xmlns:jcr="http://www.jcp.org/jcr/1.0" xmlns:rep="internal"
+          jcr:primaryType="rep:SystemUser"
+          jcr:uuid="93457888-3f14-396c-96d4-fa1851f6c0e1"
+          rep:authorizableId="sling-multipackageupdate"
+          rep:principalName="sling-multipackageupdate" />

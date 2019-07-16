@@ -26,7 +26,7 @@ public final class MultiPackageUpdateServlet extends SlingAllMethodsServlet impl
 
     private static final long serialVersionUID = -1704915461516132101L;
 
-    private static final String DEFAULT_SUB_SERVICE_NAME = "updater";
+    private static final String DEFAULT_SUB_SERVICE_NAME = "multipackageupdate";
     public static final String CMD_INFO = "Please add a `cmd` parameter:\n" +
             "- `start`: to trigger the multipackageupdate process,\n" +
             "- `stop`: to stop current multipackageupdate thread,\n" +
