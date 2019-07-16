@@ -16,8 +16,8 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
-		<groupId>com.headwire.sling.test</groupId>
-		<artifactId>sling-app</artifactId>
+		<groupId>com.headwire.sling</groupId>
+		<artifactId>multipackageupdate</artifactId>
 		<version>1.0.0-SNAPSHOT</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
@@ -25,12 +25,11 @@
 	<artifactId>ui.apps</artifactId>
 	<packaging>content-package</packaging>
 
-	<name>Sling Test App - UI Apps</name>
+	<name>Multi Package Update - UI Apps</name>
 	<description>
-        This is an empty JCR Package where the JCR Content
-        can be deployed with.
+		UI Apps part of Multi Package Update.
 
-        For a "not all" package this JCR Package will embedd
+        For a "not all" package this JCR Package will embed
         the "core" bundle. It can be deployed with the
         "autoInstallPackage" profile.
 
@@ -41,7 +40,7 @@
         It is advisable to deploy any bundles or packages
         in one manner as deploying bundles inside a package
         and through the System Console can lead to unexpected
-        and errorneous situations.
+        and erroneous situations.
     </description>
 	<dependencies>
 		<dependency>

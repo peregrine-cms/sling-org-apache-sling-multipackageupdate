@@ -15,13 +15,13 @@
 
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>com.headwire.sling.test</groupId>
-	<artifactId>sling-app</artifactId>
+	<groupId>com.headwire.sling</groupId>
+	<artifactId>multipackageupdate</artifactId>
 	<version>1.0.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
-	<name>Sling Test App</name>
-	<description>Sling Test App Parent POM</description>
+	<name>Multi Package Update</name>
+	<description>Multi Package Update Sling App Parent POM</description>
 
 	<!-- ATTENTION: This archetype creates two modules: 'core' and 'ui.apps' 
 		Both of these modules are empty and you can start filling it in with your 

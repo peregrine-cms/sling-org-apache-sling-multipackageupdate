@@ -16,8 +16,8 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
-		<groupId>com.headwire.sling.test</groupId>
-		<artifactId>sling-app</artifactId>
+		<groupId>com.headwire.sling</groupId>
+		<artifactId>multipackageupdate</artifactId>
 		<version>1.0.0-SNAPSHOT</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
@@ -25,18 +25,10 @@
 	<artifactId>core</artifactId>
 	<packaging>bundle</packaging>
 
-	<name>Sling Test App - Core</name>
+	<name>Multi Package Update - Core</name>
 	<description>
-        This is an empty OSGi Bundle which can be used
-        to compile and deploy OSGi Services to Sling.
-
-        This Bundle can be deployed using the Profile
-        "autoInstallBundle" but that should not be used
-        together with the "ui.apps" Profile "autoInstallAll"
-        as they are not deployed the same way and can lead
-        to undesired issues during deployment (bundle not
-        updated or not working at all).
-    </description>
+		Core bundle for Multi Package Update with the main servlet exposed.
+	</description>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -195,7 +187,7 @@
 	</dependencies>
 
 	<profiles>
-		<!-- ATTENTION: It is highly recomended not to deploy this with this Profile 
+		<!-- ATTENTION: It is highly recommended not to deploy this with this Profile
 			if this Bundle was or will be deployed with the All package -->
 		<profile>
 			<id>autoInstallBundle</id>
