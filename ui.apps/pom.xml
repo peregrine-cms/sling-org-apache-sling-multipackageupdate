@@ -82,7 +82,7 @@
 		</plugins>
 	</build>
 	<profiles>
-		<!-- ATTENTION: It is highly recomended not to deploy this with this Profile 
+		<!-- ATTENTION: It is highly recommended not to deploy this with this Profile
 			if this Package was or will be deployed with the All package -->
 		<profile>
 			<id>autoInstallPackage</id>
