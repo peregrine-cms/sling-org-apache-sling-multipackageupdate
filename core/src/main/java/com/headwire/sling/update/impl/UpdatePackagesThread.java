@@ -26,9 +26,13 @@ import java.util.Calendar;
 public final class UpdatePackagesThread extends Thread implements ProgressTrackerListener {
 
 	public static final String TERMINATED_BY_USER = "Update process terminated by user.";
+	public static final String NEW_LINE = "\n";
 
 	private final Logger logger = LoggerFactory.getLogger(getClass());
+
 	private final SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+
+	private final StringBuilder status = new StringBuilder("Update Packages Thread created @ ");
 
 	private final ImportOptions importOptions = new ImportOptions();
 
@@ -38,15 +42,14 @@ public final class UpdatePackagesThread extends Thread implements ProgressTracke
 
 	private JcrPackageManager packageManager;
 
-	private String status;
-
 	private boolean terminate = false;
 
 	public UpdatePackagesThread(final PackagesListEndpoint endpoint, final UpdatePackagesListener listener, final Session session) {
 		this.endpoint = endpoint;
 		this.listener = listener;
 		this.session = session;
-		status = "Update Packages Thread created @ " + dateFormat.format(Calendar.getInstance().getTime()) + ".\n";
+		appendCurrentTime();
+		endSentence();
 		importOptions.setListener(this);
 	}
 
@@ -58,30 +61,55 @@ public final class UpdatePackagesThread extends Thread implements ProgressTracke
 		} catch (final IOException | RepositoryException | PackageException e) {
 			final String msg = "Unable to update packages from " + endpoint.getPackagesListUrl();
 			logger.error(msg, e);
-			status += msg + "\n" + ExceptionUtils.getStackTrace(e);
+			status.append(msg);
+			appendNewLine();
+			appendStackTrace(e);
 		}
 
-		listener.notifyPackagesUpdated(status);
+		listener.notifyPackagesUpdated(status.toString());
+	}
+
+	private void appendCurrentTime() {
+		status.append(dateFormat.format(Calendar.getInstance().getTime()));
+	}
+
+	private void appendNewLine() {
+		status.append(NEW_LINE);
+	}
+
+	private void endSentence() {
+		status.append(".");
+		appendNewLine();
+	}
+
+	private void appendStackTrace(Exception e) {
+		status.append(ExceptionUtils.getStackTrace(e));
 	}
 
 	private void process() throws IOException, RepositoryException, PackageException {
 		final String packagesListUrl = endpoint.getPackagesListUrl();
-		status += "Downloading packages names from: " + packagesListUrl + ".\n";
+		status.append("Downloading packages names from: ");
+		status.append(packagesListUrl);
+		endSentence();
 		for (final String packageName : getPackagesNames(packagesListUrl)) {
 			if (terminate) {
-				status += TERMINATED_BY_USER;
+				status.append(TERMINATED_BY_USER);
 				return;
 			}
 
-			status += "Downloading package: " + packageName + ".\n";
+			status.append("Downloading package: ");
+			status.append(packageName);
+			endSentence();
 			final InputStream stream = downloadPackage(packageName);
 			final JcrPackage pack = packageManager.upload(stream, true);
 			if (terminate) {
-				status += TERMINATED_BY_USER;
+				status.append(TERMINATED_BY_USER);
 				return;
 			}
 
-			status += "Installing package: " + packageName + ".\n";
+			status.append("Installing package: ");
+			status.append(packageName);
+			endSentence();
 			pack.install(importOptions);
 		}
 	}
@@ -89,7 +117,7 @@ public final class UpdatePackagesThread extends Thread implements ProgressTracke
 	private String[] getPackagesNames(final String url) throws IOException {
 		String packagesText = IOUtils.toString(new URL(url), Charsets.UTF_8);
 		packagesText = StringUtils.trimToEmpty(packagesText);
-		return StringUtils.split(packagesText, "\n");
+		return StringUtils.split(packagesText, NEW_LINE);
 	}
 
 	private InputStream downloadPackage(final String name) throws IOException {
@@ -99,16 +127,23 @@ public final class UpdatePackagesThread extends Thread implements ProgressTracke
 
 	@Override
 	public void onMessage(final Mode mode, final String action, final String path) {
-		status += action + ": " + path + "\n";
+		status.append(action);
+		status.append(": ");
+		status.append(path);
+		appendNewLine();
 	}
 
 	@Override
 	public void onError(final Mode mode, final String path, final Exception e) {
-		status += "[ERROR] " + path + "\n" + ExceptionUtils.getStackTrace(e) + "\n";
+		status.append("[ERROR] ");
+		status.append(path);
+		appendNewLine();
+		appendStackTrace(e);
+		appendNewLine();
 	}
 
 	public String getStatus() {
-		return status;
+		return status.toString();
 	}
 
 	public void terminate() {

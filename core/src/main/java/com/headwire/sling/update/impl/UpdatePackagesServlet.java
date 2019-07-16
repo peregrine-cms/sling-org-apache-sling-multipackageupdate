@@ -35,15 +35,15 @@ public final class UpdatePackagesServlet extends SlingAllMethodsServlet implemen
     public static final String UNABLE_TO_OBTAIN_SESSION = "Unable to obtain session.";
     public static final String NO_UPDATE_THREAD_RUNNING_CURRENTLY = "There is no update thread running currently.";
 
-    private final Logger logger = LoggerFactory.getLogger(getClass());
-    private final Object lock = logger;
-
-    @Reference
-    private SlingRepository repository;
+    private transient final Logger logger = LoggerFactory.getLogger(getClass());
+    private transient final Object lock = new Object();
 
     private UpdatePackagesServletConfig config;
 
-    private UpdatePackagesThread currentThread;
+    @Reference
+    private transient SlingRepository repository;
+
+    private transient UpdatePackagesThread currentThread;
 
     private String lastStatus = "No previous status available.";
 
@@ -56,31 +56,31 @@ public final class UpdatePackagesServlet extends SlingAllMethodsServlet implemen
     protected void doGet(final SlingHttpServletRequest request, final SlingHttpServletResponse response)
             throws IOException {
         final String cmd = request.getParameter("cmd");
-        String status = CMD_INFO;
+        final StringBuilder status = new StringBuilder(CMD_INFO);
         if (StringUtils.equalsIgnoreCase(cmd, "start")) {
-            status += startThreadOrGetStatus();
+            status.append(startThreadOrGetStatus());
         } else if (StringUtils.equalsIgnoreCase(cmd, "stop")) {
             synchronized (lock) {
                 if (currentThread == null) {
-                    status += NO_UPDATE_THREAD_RUNNING_CURRENTLY;
+                    status.append(NO_UPDATE_THREAD_RUNNING_CURRENTLY);
                 } else {
                     currentThread.terminate();
-                    status += "Update thread marked for earlier termination.\n" + currentThread.getStatus();
+                    status.append("Update thread marked for earlier termination.\n" + currentThread.getStatus());
                 }
             }
         } else if (StringUtils.equalsIgnoreCase(cmd, "lastStatus")) {
-            status += lastStatus;
+            status.append(lastStatus);
         } else if (StringUtils.equalsIgnoreCase(cmd, "currentStatus")) {
             synchronized (lock) {
                 if (currentThread == null) {
-                    status += NO_UPDATE_THREAD_RUNNING_CURRENTLY;
+                    status.append(NO_UPDATE_THREAD_RUNNING_CURRENTLY);
                 } else {
-                    status += currentThread.getStatus();
+                    status.append(currentThread.getStatus());
                 }
             }
         }
 
-        response.getWriter().write(status);
+        response.getWriter().write(status.toString());
     }
 
     private String startThreadOrGetStatus() {
