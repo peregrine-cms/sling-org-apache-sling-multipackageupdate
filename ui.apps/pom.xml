@@ -64,7 +64,7 @@
 							<goal>package</goal>
 						</goals>
 						<configuration>
-							<embeddedTarget>/apps/test/install</embeddedTarget>
+							<embeddedTarget>/apps/multipackageupdate/install</embeddedTarget>
 							<embeddeds>
 								<embedded>
 									<groupId>${project.groupId}</groupId>

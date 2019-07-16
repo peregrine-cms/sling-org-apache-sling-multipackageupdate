@@ -22,23 +22,23 @@
         If unsure what to do then go to the Composum Package Manager
         (/bin/packages.html) and create a test package. To to the package
         filter list and add filter entries until all of the app provides
-        nodes are included but none of the customer generatedd nodes.
+        nodes are included but none of the customer generated nodes.
 
         Also any sub package of this module needs to exclude /apps/github/install
         folder otherwise they wipe all installed bundles.
     -->
-    <filter root="/content/test" />
+    <filter root="/content/multipackageupdate" />
     <!--
         Need to exclude the Install folder otherwise the Bundle will be undeployed
         as it is in the '/apps/github/install' folder (see the 'all'
         package).
     -->
-    <filter root="/apps/test">
-        <exclude pattern="/apps/test/install/.*" />
+    <filter root="/apps/multipackageupdate">
+        <exclude pattern="/apps/multipackageupdate/install/.*" />
     </filter>
     <filter root="/home/users/system/hw-updater" />
     <filter root="/rep:policy">
-        <include pattern="/rep:policy/hw-updater"/>
-        <exclude pattern="/rep:policy/.*"/>
+        <include pattern="/rep:policy/hw-updater" />
+        <exclude pattern="/rep:policy/.*" />
     </filter>
 </workspaceFilter>
