@@ -140,12 +140,10 @@
 			</plugins>
 		</pluginManagement>
 	</build>
-	<dependencies><!-- https://mvnrepository.com/artifact/javax.servlet/servlet-api -->
+	<dependencies>
 		<dependency>
 			<groupId>javax.servlet</groupId>
 			<artifactId>servlet-api</artifactId>
-			<version>2.5</version>
-			<scope>provided</scope>
 		</dependency>
 
 		<dependency>
@@ -172,6 +170,11 @@
 		</dependency>
 
 		<dependency>
+			<groupId>org.apache.jackrabbit.vault</groupId>
+			<artifactId>org.apache.jackrabbit.vault</artifactId>
+		</dependency>
+
+		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
 		</dependency>
@@ -180,29 +183,14 @@
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-lang3</artifactId>
 		</dependency>
-
-		<!-- https://mvnrepository.com/artifact/commons-codec/commons-codec -->
 		<dependency>
 			<groupId>commons-codec</groupId>
 			<artifactId>commons-codec</artifactId>
-			<version>1.9</version>
-			<scope>provided</scope>
 		</dependency>
-		<!-- https://mvnrepository.com/artifact/commons-io/commons-io -->
 		<dependency>
 			<groupId>commons-io</groupId>
 			<artifactId>commons-io</artifactId>
-			<version>2.5</version>
-			<scope>provided</scope>
 		</dependency>
-		<!-- https://mvnrepository.com/artifact/org.apache.jackrabbit.vault/org.apache.jackrabbit.vault -->
-		<dependency>
-			<groupId>org.apache.jackrabbit.vault</groupId>
-			<artifactId>org.apache.jackrabbit.vault</artifactId>
-			<version>3.1.30</version>
-			<scope>provided</scope>
-		</dependency>
-
 
 	</dependencies>
 
