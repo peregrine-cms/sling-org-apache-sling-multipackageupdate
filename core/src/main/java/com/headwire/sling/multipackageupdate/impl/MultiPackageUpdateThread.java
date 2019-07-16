@@ -1,7 +1,7 @@
-package com.headwire.sling.update.impl;
+package com.headwire.sling.multipackageupdate.impl;
 
-import com.headwire.sling.update.PackagesListEndpoint;
-import com.headwire.sling.update.UpdatePackagesListener;
+import com.headwire.sling.multipackageupdate.PackagesListEndpoint;
+import com.headwire.sling.multipackageupdate.PackagesUpdatedListener;
 import org.apache.commons.codec.Charsets;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -23,7 +23,7 @@ import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
-public final class UpdatePackagesThread extends Thread implements ProgressTrackerListener {
+public final class MultiPackageUpdateThread extends Thread implements ProgressTrackerListener {
 
 	public static final String TERMINATED_BY_USER = "Update process terminated by user.";
 	public static final String NEW_LINE = "\n";
@@ -37,14 +37,14 @@ public final class UpdatePackagesThread extends Thread implements ProgressTracke
 	private final ImportOptions importOptions = new ImportOptions();
 
 	private final PackagesListEndpoint endpoint;
-	private final UpdatePackagesListener listener;
+	private final PackagesUpdatedListener listener;
 	private final Session session;
 
 	private JcrPackageManager packageManager;
 
 	private boolean terminate = false;
 
-	public UpdatePackagesThread(final PackagesListEndpoint endpoint, final UpdatePackagesListener listener, final Session session) {
+	public MultiPackageUpdateThread(final PackagesListEndpoint endpoint, final PackagesUpdatedListener listener, final Session session) {
 		this.endpoint = endpoint;
 		this.listener = listener;
 		this.session = session;
@@ -59,7 +59,7 @@ public final class UpdatePackagesThread extends Thread implements ProgressTracke
 		try {
 			process();
 		} catch (final IOException | RepositoryException | PackageException e) {
-			final String msg = "Unable to update packages from " + endpoint.getPackagesListUrl();
+			final String msg = "Unable to multipackageupdate packages from " + endpoint.getPackagesListUrl();
 			logger.error(msg, e);
 			status.append(msg);
 			appendNewLine();

@@ -1,4 +1,4 @@
-package com.headwire.sling.update;
+package com.headwire.sling.multipackageupdate;
 
 public interface PackagesListEndpoint {
 

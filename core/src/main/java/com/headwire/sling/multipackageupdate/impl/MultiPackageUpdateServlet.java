@@ -1,7 +1,7 @@
-package com.headwire.sling.update.impl;
+package com.headwire.sling.multipackageupdate.impl;
 
-import com.headwire.sling.update.PackagesListEndpoint;
-import com.headwire.sling.update.UpdatePackagesListener;
+import com.headwire.sling.multipackageupdate.PackagesListEndpoint;
+import com.headwire.sling.multipackageupdate.PackagesUpdatedListener;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.sling.api.SlingHttpServletRequest;
@@ -21,34 +21,34 @@ import javax.servlet.Servlet;
 import java.io.IOException;
 
 @Component(service = Servlet.class)
-@Designate(ocd = UpdatePackagesServletConfig.class)
-public final class UpdatePackagesServlet extends SlingAllMethodsServlet implements PackagesListEndpoint, UpdatePackagesListener {
+@Designate(ocd = MultiPackageUpdateServletConfig.class)
+public final class MultiPackageUpdateServlet extends SlingAllMethodsServlet implements PackagesListEndpoint, PackagesUpdatedListener {
 
     private static final long serialVersionUID = -1704915461516132101L;
 
     private static final String DEFAULT_SUB_SERVICE_NAME = "updater";
     public static final String CMD_INFO = "Please add a `cmd` parameter:\n" +
-            "- `start`: to trigger the update process,\n" +
-            "- `stop`: to stop current update thread,\n" +
+            "- `start`: to trigger the multipackageupdate process,\n" +
+            "- `stop`: to stop current multipackageupdate thread,\n" +
             "- `lastStatus`: to check the last status,\n" +
-            "- `currentStatus`: to see the current status, if update is running.\n\n";
+            "- `currentStatus`: to see the current status, if multipackageupdate is running.\n\n";
     public static final String UNABLE_TO_OBTAIN_SESSION = "Unable to obtain session.";
-    public static final String NO_UPDATE_THREAD_RUNNING_CURRENTLY = "There is no update thread running currently.";
+    public static final String NO_UPDATE_THREAD_RUNNING_CURRENTLY = "There is no multipackageupdate thread running currently.";
 
     private transient final Logger logger = LoggerFactory.getLogger(getClass());
     private transient final Object lock = new Object();
 
-    private UpdatePackagesServletConfig config;
+    private MultiPackageUpdateServletConfig config;
 
     @Reference
     private transient SlingRepository repository;
 
-    private transient UpdatePackagesThread currentThread;
+    private transient MultiPackageUpdateThread currentThread;
 
     private String lastStatus = "No previous status available.";
 
     @Activate
-    public void activate(final UpdatePackagesServletConfig config) {
+    public void activate(final MultiPackageUpdateServletConfig config) {
         this.config = config;
     }
 
@@ -105,7 +105,7 @@ public final class UpdatePackagesServlet extends SlingAllMethodsServlet implemen
     private String startThread() {
         try {
             final Session session = repository.loginService(getSubServiceName(), null);
-            currentThread = new UpdatePackagesThread(this, this, session);
+            currentThread = new MultiPackageUpdateThread(this, this, session);
             currentThread.start();
             return "Update process started just now.";
         } catch (final RepositoryException e) {
