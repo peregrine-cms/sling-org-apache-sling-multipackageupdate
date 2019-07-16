@@ -83,6 +83,12 @@ public final class UpdatePackagesServlet extends SlingAllMethodsServlet implemen
         response.getWriter().write(status.toString());
     }
 
+    @Override
+    protected void doPost(final SlingHttpServletRequest request, final SlingHttpServletResponse response)
+            throws IOException {
+        doGet(request, response);
+    }
+
     private String startThreadOrGetStatus() {
         String status = "Update process already in progress:\n";
         synchronized(lock) {
