@@ -31,9 +31,9 @@ and needs a parameter named `cmd`, which can be one of the following:
 - [`start`](http://localhost:8080/bin/update-packages?cmd=start): to trigger the multi-package update process,
 - [`stop`](http://localhost:8080/bin/update-packages?cmd=stop): to stop the current update thread
 (if there is one running),
-- [`lastStatus`](http://localhost:8080/bin/update-packages?cmd=lastStatus): to check the last status,
 - [`currentStatus`](http://localhost:8080/bin/update-packages?cmd=currentStatus):
-to see the current status (if there is a thread running).
+to see the current status (if there is a thread running),
+- [`lastLog`](http://localhost:8080/bin/update-packages?cmd=lastLog): to check the last log message.
 
 #### Configuration
 

@@ -2,5 +2,5 @@ package com.headwire.sling.multipackageupdate;
 
 public interface PackagesUpdatedListener {
 
-    void notifyPackagesUpdated(String status);
+    void notifyPackagesUpdated(String logText);
 }

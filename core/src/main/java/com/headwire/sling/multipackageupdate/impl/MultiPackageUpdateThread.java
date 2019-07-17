@@ -32,7 +32,7 @@ public final class MultiPackageUpdateThread extends Thread implements ProgressTr
 
 	private final SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
 
-	private final StringBuilder status = new StringBuilder("Update Packages Thread created @ ");
+	private final StringBuilder logText = new StringBuilder("Update Packages Thread created @ ");
 
 	private final ImportOptions importOptions = new ImportOptions();
 
@@ -59,57 +59,61 @@ public final class MultiPackageUpdateThread extends Thread implements ProgressTr
 		try {
 			process();
 		} catch (final IOException | RepositoryException | PackageException e) {
-			final String msg = "Unable to multipackageupdate packages from " + endpoint.getPackagesListUrl();
+			final String msg = "Unable to update packages from " + endpoint.getPackagesListUrl();
 			logger.error(msg, e);
-			status.append(msg);
-			appendNewLine();
+			appendNewLine(msg);
 			appendStackTrace(e);
 		}
 
-		listener.notifyPackagesUpdated(status.toString());
+		listener.notifyPackagesUpdated(getLogText());
+	}
+
+	private void append(final String... messages) {
+		for (final String message : messages) {
+			logText.append(message);
+		}
 	}
 
 	private void appendCurrentTime() {
-		status.append(dateFormat.format(Calendar.getInstance().getTime()));
+		append(dateFormat.format(Calendar.getInstance().getTime()));
 	}
 
-	private void appendNewLine() {
-		status.append(NEW_LINE);
+	private void appendNewLine(final String... messages) {
+		append(messages);
+		append(NEW_LINE);
 	}
 
 	private void endSentence() {
-		status.append(".");
-		appendNewLine();
+		appendNewLine(".");
 	}
 
-	private void appendStackTrace(Exception e) {
-		status.append(ExceptionUtils.getStackTrace(e));
+	private void appendSentence(final String... messages) {
+		append(messages);
+		endSentence();
+	}
+
+	private void appendStackTrace(final Exception e) {
+		append(ExceptionUtils.getStackTrace(e));
 	}
 
 	private void process() throws IOException, RepositoryException, PackageException {
 		final String packagesListUrl = endpoint.getPackagesListUrl();
-		status.append("Downloading packages names from: ");
-		status.append(packagesListUrl);
-		endSentence();
+		appendSentence("Downloading packages names from: ", packagesListUrl);
 		for (final String packageName : getPackagesNames(packagesListUrl)) {
 			if (terminate) {
-				status.append(TERMINATED_BY_USER);
+				append(TERMINATED_BY_USER);
 				return;
 			}
 
-			status.append("Downloading package: ");
-			status.append(packageName);
-			endSentence();
+			appendSentence("Downloading package: ", packageName);
 			final InputStream stream = downloadPackage(packageName);
 			final JcrPackage pack = packageManager.upload(stream, true);
 			if (terminate) {
-				status.append(TERMINATED_BY_USER);
+				append(TERMINATED_BY_USER);
 				return;
 			}
 
-			status.append("Installing package: ");
-			status.append(packageName);
-			endSentence();
+			appendSentence("Installing package: ", packageName);
 			pack.install(importOptions);
 		}
 	}
@@ -127,23 +131,18 @@ public final class MultiPackageUpdateThread extends Thread implements ProgressTr
 
 	@Override
 	public void onMessage(final Mode mode, final String action, final String path) {
-		status.append(action);
-		status.append(": ");
-		status.append(path);
-		appendNewLine();
+		appendNewLine(action, ": ", path);
 	}
 
 	@Override
 	public void onError(final Mode mode, final String path, final Exception e) {
-		status.append("[ERROR] ");
-		status.append(path);
-		appendNewLine();
+		appendNewLine("[ERROR] ", path);
 		appendStackTrace(e);
 		appendNewLine();
 	}
 
-	public String getStatus() {
-		return status.toString();
+	public String getLogText() {
+		return logText.toString();
 	}
 
 	public void terminate() {
