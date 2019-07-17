@@ -19,6 +19,6 @@
 -->
 <jcr:root xmlns:jcr="http://www.jcp.org/jcr/1.0" xmlns:nt="http://www.jcp.org/jcr/nt/1.0"
           jcr:primaryType="sling:Folder"
-          jcr:title="Sling Test App"
-          jcr:description="Sling Test App Content Root"
+          jcr:title="Multi Package Update"
+          jcr:description="Multi Package Update Sling App - Content Root"
 />
