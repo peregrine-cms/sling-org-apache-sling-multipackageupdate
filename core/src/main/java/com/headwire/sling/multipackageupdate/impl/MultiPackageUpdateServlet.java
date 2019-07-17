@@ -26,12 +26,7 @@ public final class MultiPackageUpdateServlet extends SlingAllMethodsServlet impl
 
     private static final long serialVersionUID = -1704915461516132101L;
 
-    private static final String DEFAULT_SUB_SERVICE_NAME = "multipackageupdate";
-    public static final String CMD_INFO = "Please add a `cmd` parameter:\n" +
-            "- `start`: to trigger the multipackageupdate process,\n" +
-            "- `stop`: to stop current multipackageupdate thread,\n" +
-            "- `lastStatus`: to check the last status,\n" +
-            "- `currentStatus`: to see the current status, if multipackageupdate is running.\n\n";
+    private static final String SUB_SERVICE_NAME = "multipackageupdate";
     public static final String UNABLE_TO_OBTAIN_SESSION = "Unable to obtain session.";
     public static final String NO_UPDATE_THREAD_RUNNING_CURRENTLY = "There is no multipackageupdate thread running currently.";
 
@@ -56,7 +51,7 @@ public final class MultiPackageUpdateServlet extends SlingAllMethodsServlet impl
     protected void doGet(final SlingHttpServletRequest request, final SlingHttpServletResponse response)
             throws IOException {
         final String cmd = request.getParameter("cmd");
-        final StringBuilder status = new StringBuilder(CMD_INFO);
+        final StringBuilder status = new StringBuilder();
         if (StringUtils.equalsIgnoreCase(cmd, "start")) {
             status.append(startThreadOrGetStatus());
         } else if (StringUtils.equalsIgnoreCase(cmd, "stop")) {
@@ -104,7 +99,7 @@ public final class MultiPackageUpdateServlet extends SlingAllMethodsServlet impl
 
     private String startThread() {
         try {
-            final Session session = repository.loginService(getSubServiceName(), null);
+            final Session session = repository.loginService(SUB_SERVICE_NAME, null);
             currentThread = new MultiPackageUpdateThread(this, this, session);
             currentThread.start();
             return "Update process started just now.";
@@ -112,10 +107,6 @@ public final class MultiPackageUpdateServlet extends SlingAllMethodsServlet impl
             logger.error(UNABLE_TO_OBTAIN_SESSION, e);
             return UNABLE_TO_OBTAIN_SESSION + "\n" + ExceptionUtils.getStackTrace(e);
         }
-    }
-
-    private String getSubServiceName() {
-        return StringUtils.defaultIfBlank(config.subservice(), DEFAULT_SUB_SERVICE_NAME);
     }
 
     public String getServerUrl() {

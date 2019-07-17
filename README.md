@@ -1,4 +1,4 @@
-### Maven Project generated from Maven Archetype
+### Multi Package Update
 
 #### License
 
@@ -21,44 +21,35 @@
 
 #### Introduction
 
-This project was created by the Sling Project Maven Archetype which created
-two modules:
+This project delivers a simple servlet `MultiPackageUpdateServlet` that can perform an installation of a given list
+of packages.
 
-1. **core**: OSGi Bundle which is deployed as OSGi Bundle to Sling which includes your
-             Servlets, Filters, Sling Models and much more. This module is **not intended**
-             to contain Sling Content.
-2. **ui.apps**: JCR Content Module which is used to install a JCR Package into Sling
-                by using **Composum**. For that it must be installed and the Composum
-                Package Manager must be whitelisted.
+#### Usage
 
-There are also two more modules that provide some examples with the same name plus
-the **.example** extension. This modules should not be deployed as is but rather
-examples that you want to use should be copied to the core or ui.apps module.
-The structure of both modules are the same and so copying them over just be
-quite simple.
+The servlet is exposed at [/bin/update-packages](http://localhost:8080/bin/update-packages)
+and needs a parameter named `cmd`, which can be one of the following:
+- [`start`](http://localhost:8080/bin/update-packages?cmd=start): to trigger the multi-package update process,
+- [`stop`](http://localhost:8080/bin/update-packages?cmd=stop): to stop the current update thread
+(if there is one running),
+- [`lastStatus`](http://localhost:8080/bin/update-packages?cmd=lastStatus): to check the last status,
+- [`currentStatus`](http://localhost:8080/bin/update-packages?cmd=currentStatus):
+to see the current status (if there is a thread running).
 
-#### Attention:
+#### Configuration
 
-Due to the way Apache Maven Archetypes work both **example** modules are added
-to the parent POM's module list. Please **remove** them after you created them
-to avoid the installation of these modules into Sling.
-At the end of the parent POM you will find the lines below. Remove the lines
-with **core.example** and **ui.apps.example**.
+The main required configuration is that of
+[com.headwire.sling.multipackageupdate.impl.MultiPackageUpdateServlet](http://localhost:8080/system/console/configMgr/com.headwire.sling.multipackageupdate.impl.MultiPackageUpdateServlet):
+- **Server with Packages**: the full `URL` of the location of both packages and the listing file from below.
+An example value could be `http://localhost:8080/content`,
+- **Packages List File Name**: the name of a text file, located under the above path, containing
+the list of packages names to be installed. An example value could be `packages.txt`.
 
-    <modules>
-        <module>core</module>
-        <module>core.example</module>
-        <module>ui.apps</module>
-        <module>ui.apps.example</module>
-    </modules>
-
-#### Why a JCR Package instead of a Content Bundle
-
-There a several reasons to use a JCR Package instead of a Content Bundle
-but for the most important reason is that a JCR Package allows the **Sling
-Tooling** to update a single file rather than an entire Bundle and also
-to import a Node from Sling into the project.
-
+##### Service User Mapping
+For the proper operation of the `servlet` one has to configure
+[Sling Service User Mapper Service](http://localhost:8080/system/console/configMgr/org.apache.sling.serviceusermapping.impl.ServiceUserMapperImpl.amended)
+to associate `com.headwire.sling.multipackageupdate:multipackageupdate` with the name of
+a [System User](http://localhost:8080/bin/users.html/home/users/system/sling-multipackageupdate) with appropriate
+privileges allowing for `package` upload and installation.
 
 #### Build and Installation
 
@@ -80,11 +71,13 @@ use the project **autoInstallPackage**:
 It is probably best not to deploy the OSGi Bundle alone as this
 may lead to conflicts with the package deployment.
 
-In case of a mishape the package and bundles needs to deinstalled
-manullay:
+In case of a misshape the package and bundles needs to be uninstalled
+manually:
 
-1. Remove /apps/${appsFolderName}/install folder
-2. Uninstall the package using the package manager
-3. Remove the package from /etc/packages including the snapshots if they are still there
-4. Remove the Bundle using the OSGi Console (/system/console/bundles)
+1. Remove [`/apps/multipackageupdate/install`](http://localhost:8080/bin/browser.html/apps/multipackageupdate/install) folder,
+2. Uninstall the package using [the package manager](http://localhost:8080/bin/packages.html),
+3. Remove the package from [`/etc/packages`](http://localhost:8080/bin/browser.html/etc/packages) including the snapshots
+if they are still there,
+4. Remove [the Bundle](http://localhost:8080/system/console/bundles/com.headwire.sling.multipackageupdate) using
+the [OSGi Console](http://localhost:8080/system/console/bundles).
 

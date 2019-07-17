@@ -9,9 +9,6 @@ public @interface MultiPackageUpdateServletConfig {
 	@AttributeDefinition(name = "%sling.servlet.paths.name", description = "%sling.servlet.paths.description")
 	String[] sling_servlet_paths() default "/bin/multipackageupdate-packages";
 
-	@AttributeDefinition(name = "%subservice.name", description = "%subservice.description")
-	String subservice() default "updater";
-
 	@AttributeDefinition(name = "%server.name", description = "%server.description")
 	String server_url() default "https://vagrant.headwire.com/peregrine";
 

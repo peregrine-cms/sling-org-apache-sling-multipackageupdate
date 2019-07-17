@@ -3,6 +3,5 @@
 	jcr:primaryType="sling:OsgiConfig"
 	sling.servlet.paths="[/bin/update-packages]"
 	server.url="https://vagrant.headwire.com/peregrine"
-	subservice="multipackageupdate"
 	filename="packages.txt"
 />
