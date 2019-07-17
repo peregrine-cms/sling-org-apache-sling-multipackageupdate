@@ -65,7 +65,7 @@ public final class MultiPackageUpdateServlet extends SlingAllMethodsServlet impl
     private static final String LAST_LOG = "lastLog";
     private static final Set<String> AVAILABLE_COMMANDS = new HashSet<>(Arrays.asList(START, STOP, CURRENT_STATUS, LAST_LOG));
 
-    private transient final Gson gson = new Gson();
+    private final transient Gson gson = new Gson();
 
     private MultiPackageUpdateServletConfig config;
 
