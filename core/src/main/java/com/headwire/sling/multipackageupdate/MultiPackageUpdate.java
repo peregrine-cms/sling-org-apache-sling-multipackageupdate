@@ -1,4 +1,4 @@
-package com.headwire.sling.multipackageupdate.impl;
+package com.headwire.sling.multipackageupdate;
 
 /*-
  * #%L
@@ -25,24 +25,14 @@ package com.headwire.sling.multipackageupdate.impl;
  * #L%
  */
 
-public final class MultiPackageUpdateResponse {
+public interface MultiPackageUpdate {
 
-    private String status;
-    private String log;
+    MultiPackageUpdateResponse start(PackagesListEndpoint endpoint, String subServiceName);
 
-    public MultiPackageUpdateResponse(final String status) {
-        this.status = status;
-    }
+    MultiPackageUpdateResponse stop();
 
-    public void setLog(final String log) {
-        this.log = log;
-    }
+    MultiPackageUpdateResponse getCurrentStatus();
 
-    public String getStatus() {
-        return status;
-    }
+    MultiPackageUpdateResponse getLastLogText();
 
-    public String getLog() {
-        return log;
-    }
 }

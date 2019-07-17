@@ -26,10 +26,10 @@ package com.headwire.sling.multipackageupdate.impl;
  */
 
 import com.google.gson.Gson;
+import com.headwire.sling.multipackageupdate.MultiPackageUpdate;
+import com.headwire.sling.multipackageupdate.MultiPackageUpdateResponse;
 import com.headwire.sling.multipackageupdate.PackagesListEndpoint;
-import com.headwire.sling.multipackageupdate.PackagesUpdatedListener;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.SlingHttpServletResponse;
 import org.apache.sling.api.servlets.SlingAllMethodsServlet;
@@ -37,12 +37,7 @@ import org.apache.sling.jcr.api.SlingRepository;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
-import org.osgi.service.metatype.annotations.Designate;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import javax.jcr.RepositoryException;
-import javax.jcr.Session;
 import javax.servlet.Servlet;
 import java.io.IOException;
 import java.util.Arrays;
@@ -57,15 +52,11 @@ import static org.apache.sling.api.servlets.ServletResolverConstants.*;
                 SLING_SERVLET_RESOURCE_TYPES + "=multipackageupdate/update",
                 SLING_SERVLET_SELECTORS + "=json"
         })
-@Designate(ocd = MultiPackageUpdateServletConfig.class)
-public final class MultiPackageUpdateServlet extends SlingAllMethodsServlet implements PackagesListEndpoint, PackagesUpdatedListener {
+public final class MultiPackageUpdateServlet extends SlingAllMethodsServlet implements PackagesListEndpoint {
 
     private static final long serialVersionUID = -1704915461516132101L;
 
     private static final String SUB_SERVICE_NAME = "multipackageupdate";
-
-    private static final String UNABLE_TO_OBTAIN_SESSION = "Unable to obtain session";
-    private static final String NO_UPDATE_THREAD_RUNNING_CURRENTLY = "There is no update thread running currently";
 
     private static final String CMD = "cmd";
     private static final String START = "start";
@@ -74,9 +65,6 @@ public final class MultiPackageUpdateServlet extends SlingAllMethodsServlet impl
     private static final String LAST_LOG = "lastLog";
     private static final Set<String> AVAILABLE_COMMANDS = new HashSet<>(Arrays.asList(START, STOP, CURRENT_STATUS, LAST_LOG));
 
-    private transient final Logger logger = LoggerFactory.getLogger(getClass());
-    private transient final Object lock = new Object();
-
     private transient final Gson gson = new Gson();
 
     private MultiPackageUpdateServletConfig config;
@@ -84,9 +72,8 @@ public final class MultiPackageUpdateServlet extends SlingAllMethodsServlet impl
     @Reference
     private transient SlingRepository repository;
 
-    private transient MultiPackageUpdateThread currentThread;
-
-    private String lastLogText;
+    @Reference
+    private transient MultiPackageUpdate updater;
 
     @Activate
     public void activate(final MultiPackageUpdateServletConfig config) {
@@ -109,76 +96,18 @@ public final class MultiPackageUpdateServlet extends SlingAllMethodsServlet impl
 
     private MultiPackageUpdateResponse execute(final String cmd) {
         if (StringUtils.equalsIgnoreCase(cmd, START)) {
-            return start();
+            return updater.start(this, SUB_SERVICE_NAME);
         }
 
         if (StringUtils.equalsIgnoreCase(cmd, STOP)) {
-            return stop();
+            return updater.stop();
         }
 
         if (StringUtils.equalsIgnoreCase(cmd, CURRENT_STATUS)) {
-            return getCurrentStatus();
+            return updater.getCurrentStatus();
         }
 
-        return getLastLogText();
-    }
-
-    private MultiPackageUpdateResponse start() {
-        synchronized(lock) {
-            if (currentThread == null) {
-                return startThread();
-            } else {
-                final MultiPackageUpdateResponse response = new MultiPackageUpdateResponse("Update process already in progress");
-                response.setLog(currentThread.getLogText());
-                return response;
-            }
-        }
-    }
-
-    private MultiPackageUpdateResponse startThread() {
-        try {
-            final Session session = repository.loginService(SUB_SERVICE_NAME, null);
-            currentThread = new MultiPackageUpdateThread(this, this, session);
-            currentThread.start();
-            return new MultiPackageUpdateResponse("Update process started just now");
-        } catch (final RepositoryException e) {
-            logger.error(UNABLE_TO_OBTAIN_SESSION, e);
-            final MultiPackageUpdateResponse response = new MultiPackageUpdateResponse(UNABLE_TO_OBTAIN_SESSION);
-            response.setLog(ExceptionUtils.getStackTrace(e));
-            return response;
-        }
-    }
-
-    private MultiPackageUpdateResponse stop() {
-        synchronized (lock) {
-            if (currentThread == null) {
-                return new MultiPackageUpdateResponse(NO_UPDATE_THREAD_RUNNING_CURRENTLY);
-            } else {
-                currentThread.terminate();
-                final MultiPackageUpdateResponse response = new MultiPackageUpdateResponse("Update thread marked for earlier termination");
-                response.setLog(currentThread.getLogText());
-                return response;
-            }
-        }
-    }
-
-    private MultiPackageUpdateResponse getCurrentStatus() {
-        synchronized (lock) {
-            if (currentThread == null) {
-                return new MultiPackageUpdateResponse(NO_UPDATE_THREAD_RUNNING_CURRENTLY);
-            } else {
-                final MultiPackageUpdateResponse response = new MultiPackageUpdateResponse("Update process in progress");
-                response.setLog(currentThread.getLogText());
-                return response;
-            }
-        }
-    }
-
-    private MultiPackageUpdateResponse getLastLogText() {
-        final String status = StringUtils.isBlank(lastLogText) ? "No previous log available" :  "Last log";
-        final MultiPackageUpdateResponse response = new MultiPackageUpdateResponse(status);
-        response.setLog(lastLogText);
-        return response;
+        return updater.getLastLogText();
     }
 
     @Override
@@ -194,13 +123,5 @@ public final class MultiPackageUpdateServlet extends SlingAllMethodsServlet impl
     @Override
     public String getPackagesListUrl() {
         return getFileUrl(config.filename());
-    }
-
-    @Override
-    public void notifyPackagesUpdated(final String logText) {
-        synchronized(lock) {
-            lastLogText = logText;
-            currentThread = null;
-        }
     }
 }
