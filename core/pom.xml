@@ -187,8 +187,6 @@
 	</dependencies>
 
 	<profiles>
-		<!-- ATTENTION: It is highly recommended not to deploy this with this Profile
-			if this Bundle was or will be deployed with the All package -->
 		<profile>
 			<id>autoInstallBundle</id>
 			<build>
