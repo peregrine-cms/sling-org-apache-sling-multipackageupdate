@@ -109,41 +109,21 @@ public final class MultiPackageUpdateServlet extends SlingAllMethodsServlet impl
 
     private MultiPackageUpdateResponse execute(final String cmd) {
         if (StringUtils.equalsIgnoreCase(cmd, START)) {
-            return startThreadOrGetStatus();
+            return start();
         }
 
         if (StringUtils.equalsIgnoreCase(cmd, STOP)) {
-            synchronized (lock) {
-                if (currentThread == null) {
-                    return new MultiPackageUpdateResponse(NO_UPDATE_THREAD_RUNNING_CURRENTLY);
-                } else {
-                    currentThread.terminate();
-                    final MultiPackageUpdateResponse response = new MultiPackageUpdateResponse("Update thread marked for earlier termination");
-                    response.setLog(currentThread.getLogText());
-                    return response;
-                }
-            }
+            return stop();
         }
 
         if (StringUtils.equalsIgnoreCase(cmd, CURRENT_STATUS)) {
-            synchronized (lock) {
-                if (currentThread == null) {
-                    return new MultiPackageUpdateResponse(NO_UPDATE_THREAD_RUNNING_CURRENTLY);
-                } else {
-                    final MultiPackageUpdateResponse response = new MultiPackageUpdateResponse("Update process in progress");
-                    response.setLog(currentThread.getLogText());
-                    return response;
-                }
-            }
+            return getCurrentStatus();
         }
 
-        final String status = StringUtils.isBlank(lastLogText) ? "No previous log available" :  "Last log";
-        final MultiPackageUpdateResponse response = new MultiPackageUpdateResponse(status);
-        response.setLog(lastLogText);
-        return response;
+        return getLastLogText();
     }
 
-    private MultiPackageUpdateResponse startThreadOrGetStatus() {
+    private MultiPackageUpdateResponse start() {
         synchronized(lock) {
             if (currentThread == null) {
                 return startThread();
@@ -167,6 +147,38 @@ public final class MultiPackageUpdateServlet extends SlingAllMethodsServlet impl
             response.setLog(ExceptionUtils.getStackTrace(e));
             return response;
         }
+    }
+
+    private MultiPackageUpdateResponse stop() {
+        synchronized (lock) {
+            if (currentThread == null) {
+                return new MultiPackageUpdateResponse(NO_UPDATE_THREAD_RUNNING_CURRENTLY);
+            } else {
+                currentThread.terminate();
+                final MultiPackageUpdateResponse response = new MultiPackageUpdateResponse("Update thread marked for earlier termination");
+                response.setLog(currentThread.getLogText());
+                return response;
+            }
+        }
+    }
+
+    private MultiPackageUpdateResponse getCurrentStatus() {
+        synchronized (lock) {
+            if (currentThread == null) {
+                return new MultiPackageUpdateResponse(NO_UPDATE_THREAD_RUNNING_CURRENTLY);
+            } else {
+                final MultiPackageUpdateResponse response = new MultiPackageUpdateResponse("Update process in progress");
+                response.setLog(currentThread.getLogText());
+                return response;
+            }
+        }
+    }
+
+    private MultiPackageUpdateResponse getLastLogText() {
+        final String status = StringUtils.isBlank(lastLogText) ? "No previous log available" :  "Last log";
+        final MultiPackageUpdateResponse response = new MultiPackageUpdateResponse(status);
+        response.setLog(lastLogText);
+        return response;
     }
 
     @Override
