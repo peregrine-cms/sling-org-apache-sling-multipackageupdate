@@ -67,7 +67,7 @@ public final class MultiPackageUpdateServlet extends SlingAllMethodsServlet impl
 
     private final transient Gson gson = new Gson();
 
-    private MultiPackageUpdateServletConfig config;
+    private transient MultiPackageUpdateServletConfig config;
 
     @Reference
     private transient SlingRepository repository;
