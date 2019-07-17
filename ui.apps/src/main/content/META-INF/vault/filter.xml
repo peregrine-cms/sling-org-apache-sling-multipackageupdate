@@ -29,5 +29,4 @@
     </filter>
     <filter root="/home/users/system/sling-multipackageupdate" />
     <filter root="/bin/mpu" />
-    <filter root="/content/multipackageupdate" />
 </workspaceFilter>
