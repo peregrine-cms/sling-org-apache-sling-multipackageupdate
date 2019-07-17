@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
   #%L
-  Multi Package Update - UI Apps
+  Multi Package Update - UI Content
   %%
   Copyright (C) 2017 headwire inc.
   %%
@@ -24,10 +24,8 @@
   #L%
   -->
 <workspaceFilter version="1.0">
-    <filter root="/apps/multipackageupdate">
-        <exclude pattern="/apps/multipackageupdate/install/.*" />
+    <filter root="/rep:policy">
+        <include pattern="/rep:policy/sling-multipackageupdate" />
+        <exclude pattern="/rep:policy/.*" />
     </filter>
-    <filter root="/home/users/system/sling-multipackageupdate" />
-    <filter root="/bin/mpu" />
-    <filter root="/content/multipackageupdate" />
 </workspaceFilter>
