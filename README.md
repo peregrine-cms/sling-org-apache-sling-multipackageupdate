@@ -45,11 +45,20 @@ An example value could be `http://localhost:8080/content`,
 the list of packages names to be installed. An example value could be `packages.txt`.
 
 ##### Service User Mapping
+
 For the proper operation of the `servlet` one has to configure
 [Sling Service User Mapper Service](http://localhost:8080/system/console/configMgr/org.apache.sling.serviceusermapping.impl.ServiceUserMapperImpl.amended)
 to associate `com.headwire.sling.multipackageupdate:multipackageupdate` with the name of
 a [System User](http://localhost:8080/bin/users.html/home/users/system/sling-multipackageupdate) with appropriate
 privileges allowing for `package` upload and installation.
+
+##### Packages List File
+
+The packages list file is a simple text file containing packages names in each line, e.g.
+
+    my-app-package-1.0.0.zip
+    my-content-package-1.0.0.zip
+    my-acl-package-1.0.0.zip
 
 #### Build and Installation
 
