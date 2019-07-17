@@ -24,7 +24,14 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-@Component(service = Servlet.class)
+import static org.apache.sling.api.servlets.ServletResolverConstants.*;
+
+@Component(service = Servlet.class,
+        property = {
+                SLING_SERVLET_METHODS + "=POST",
+                SLING_SERVLET_RESOURCE_TYPES + "=multipackageupdate/update",
+                SLING_SERVLET_SELECTORS + "=json"
+        })
 @Designate(ocd = MultiPackageUpdateServletConfig.class)
 public final class MultiPackageUpdateServlet extends SlingAllMethodsServlet implements PackagesListEndpoint, PackagesUpdatedListener {
 
@@ -62,7 +69,7 @@ public final class MultiPackageUpdateServlet extends SlingAllMethodsServlet impl
     }
 
     @Override
-    protected void doGet(final SlingHttpServletRequest request, final SlingHttpServletResponse response)
+    protected void doPost(final SlingHttpServletRequest request, final SlingHttpServletResponse response)
             throws IOException {
         final String cmd = request.getParameter(CMD);
         if (!AVAILABLE_COMMANDS.contains(cmd)) {
@@ -73,12 +80,6 @@ public final class MultiPackageUpdateServlet extends SlingAllMethodsServlet impl
         response.setContentType("application/json");
         response.setCharacterEncoding("utf-8");
         response.getWriter().write(gson.toJson(result));
-    }
-
-    @Override
-    protected void doPost(final SlingHttpServletRequest request, final SlingHttpServletResponse response)
-            throws IOException {
-        doGet(request, response);
     }
 
     private MultiPackageUpdateResponse execute(final String cmd) {

@@ -20,5 +20,6 @@
         <include pattern="/rep:policy/sling-multipackageupdate" />
         <exclude pattern="/rep:policy/.*" />
     </filter>
+    <filter root="/bin/mpu" />
     <filter root="/content/multipackageupdate" />
 </workspaceFilter>
