@@ -1,5 +1,6 @@
 package com.headwire.sling.multipackageupdate.impl;
 
+import com.google.gson.Gson;
 import com.headwire.sling.multipackageupdate.PackagesListEndpoint;
 import com.headwire.sling.multipackageupdate.PackagesUpdatedListener;
 import org.apache.commons.lang3.StringUtils;
@@ -19,6 +20,9 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.servlet.Servlet;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 @Component(service = Servlet.class)
 @Designate(ocd = MultiPackageUpdateServletConfig.class)
@@ -27,11 +31,21 @@ public final class MultiPackageUpdateServlet extends SlingAllMethodsServlet impl
     private static final long serialVersionUID = -1704915461516132101L;
 
     private static final String SUB_SERVICE_NAME = "multipackageupdate";
-    public static final String UNABLE_TO_OBTAIN_SESSION = "Unable to obtain session.";
-    public static final String NO_UPDATE_THREAD_RUNNING_CURRENTLY = "There is no multipackageupdate thread running currently.";
+
+    private static final String UNABLE_TO_OBTAIN_SESSION = "Unable to obtain session.";
+    private static final String NO_UPDATE_THREAD_RUNNING_CURRENTLY = "There is no update thread running currently.";
+
+    private static final String CMD = "cmd";
+    private static final String START = "start";
+    private static final String STOP = "stop";
+    private static final String CURRENT_STATUS = "currentStatus";
+    private static final String LAST_STATUS = "lastStatus";
+    private static final Set<String> AVAILABLE_COMMANDS = new HashSet<>(Arrays.asList(START, STOP, CURRENT_STATUS, LAST_STATUS));
 
     private transient final Logger logger = LoggerFactory.getLogger(getClass());
     private transient final Object lock = new Object();
+
+    private transient final Gson gson = new Gson();
 
     private MultiPackageUpdateServletConfig config;
 
@@ -40,7 +54,7 @@ public final class MultiPackageUpdateServlet extends SlingAllMethodsServlet impl
 
     private transient MultiPackageUpdateThread currentThread;
 
-    private String lastStatus = "No previous status available.";
+    private String lastStatus;
 
     @Activate
     public void activate(final MultiPackageUpdateServletConfig config) {
@@ -50,32 +64,15 @@ public final class MultiPackageUpdateServlet extends SlingAllMethodsServlet impl
     @Override
     protected void doGet(final SlingHttpServletRequest request, final SlingHttpServletResponse response)
             throws IOException {
-        final String cmd = request.getParameter("cmd");
-        final StringBuilder status = new StringBuilder();
-        if (StringUtils.equalsIgnoreCase(cmd, "start")) {
-            status.append(startThreadOrGetStatus());
-        } else if (StringUtils.equalsIgnoreCase(cmd, "stop")) {
-            synchronized (lock) {
-                if (currentThread == null) {
-                    status.append(NO_UPDATE_THREAD_RUNNING_CURRENTLY);
-                } else {
-                    currentThread.terminate();
-                    status.append("Update thread marked for earlier termination.\n" + currentThread.getStatus());
-                }
-            }
-        } else if (StringUtils.equalsIgnoreCase(cmd, "lastStatus")) {
-            status.append(lastStatus);
-        } else if (StringUtils.equalsIgnoreCase(cmd, "currentStatus")) {
-            synchronized (lock) {
-                if (currentThread == null) {
-                    status.append(NO_UPDATE_THREAD_RUNNING_CURRENTLY);
-                } else {
-                    status.append(currentThread.getStatus());
-                }
-            }
+        final String cmd = request.getParameter(CMD);
+        if (!AVAILABLE_COMMANDS.contains(cmd)) {
+            return;
         }
 
-        response.getWriter().write(status.toString());
+        final MultiPackageUpdateResponse result = execute(cmd);
+        response.setContentType("application/json");
+        response.setCharacterEncoding("utf-8");
+        response.getWriter().write(gson.toJson(result));
     }
 
     @Override
@@ -84,39 +81,79 @@ public final class MultiPackageUpdateServlet extends SlingAllMethodsServlet impl
         doGet(request, response);
     }
 
-    private String startThreadOrGetStatus() {
-        String status = "Update process already in progress:\n";
-        synchronized(lock) {
-            if (currentThread == null) {
-                status = startThread();
-            } else {
-                status += currentThread.getStatus();
+    private MultiPackageUpdateResponse execute(final String cmd) {
+        if (StringUtils.equalsIgnoreCase(cmd, START)) {
+            return startThreadOrGetStatus();
+        }
+
+        if (StringUtils.equalsIgnoreCase(cmd, STOP)) {
+            synchronized (lock) {
+                if (currentThread == null) {
+                    return new MultiPackageUpdateResponse(NO_UPDATE_THREAD_RUNNING_CURRENTLY);
+                } else {
+                    currentThread.terminate();
+                    final MultiPackageUpdateResponse response = new MultiPackageUpdateResponse("Update thread marked for earlier termination");
+                    response.setLog(currentThread.getStatus());
+                    return response;
+                }
             }
         }
 
-        return status;
+        if (StringUtils.equalsIgnoreCase(cmd, CURRENT_STATUS)) {
+            synchronized (lock) {
+                if (currentThread == null) {
+                    return new MultiPackageUpdateResponse(NO_UPDATE_THREAD_RUNNING_CURRENTLY);
+                } else {
+                    final MultiPackageUpdateResponse response = new MultiPackageUpdateResponse("Update process in progress");
+                    response.setLog(currentThread.getStatus());
+                    return response;
+                }
+            }
+        }
+
+        final String status = StringUtils.isBlank(lastStatus) ? "No previous status available" :  "Last status";
+        final MultiPackageUpdateResponse response = new MultiPackageUpdateResponse(status);
+        response.setLog(lastStatus);
+        return response;
     }
 
-    private String startThread() {
+    private MultiPackageUpdateResponse startThreadOrGetStatus() {
+        synchronized(lock) {
+            if (currentThread == null) {
+                return startThread();
+            } else {
+                final MultiPackageUpdateResponse response = new MultiPackageUpdateResponse("Update process already in progress");
+                response.setLog(currentThread.getStatus());
+                return response;
+            }
+        }
+    }
+
+    private MultiPackageUpdateResponse startThread() {
         try {
             final Session session = repository.loginService(SUB_SERVICE_NAME, null);
             currentThread = new MultiPackageUpdateThread(this, this, session);
             currentThread.start();
-            return "Update process started just now.";
+            return new MultiPackageUpdateResponse("Update process started just now");
         } catch (final RepositoryException e) {
             logger.error(UNABLE_TO_OBTAIN_SESSION, e);
-            return UNABLE_TO_OBTAIN_SESSION + "\n" + ExceptionUtils.getStackTrace(e);
+            final MultiPackageUpdateResponse response = new MultiPackageUpdateResponse(UNABLE_TO_OBTAIN_SESSION);
+            response.setLog(ExceptionUtils.getStackTrace(e));
+            return response;
         }
     }
 
+    @Override
     public String getServerUrl() {
         return config.server_url();
     }
 
+    @Override
     public String getFileUrl(final String name) {
         return getServerUrl() + "/" + name;
     }
 
+    @Override
     public String getPackagesListUrl() {
         return getFileUrl(config.filename());
     }
