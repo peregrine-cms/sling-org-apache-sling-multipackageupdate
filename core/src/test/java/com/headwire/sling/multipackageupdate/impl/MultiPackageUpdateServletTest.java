@@ -39,14 +39,10 @@ public final class MultiPackageUpdateServletTest {
     @Before
     public void setUp() throws IOException, NoSuchFieldException {
         PrivateAccessor.setField(model, "updater", updater);
+        model.activate(config);
 
         when(response.getWriter())
                 .thenReturn(writer);
-    }
-
-    @Test
-    public void activate() {
-        model.activate(config);
     }
 
     private void doPost(final String cmd) throws IOException {
