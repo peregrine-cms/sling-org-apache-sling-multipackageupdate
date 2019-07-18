@@ -25,9 +25,7 @@ package com.headwire.sling.multipackageupdate.impl;
  * #L%
  */
 
-import com.headwire.sling.multipackageupdate.MultiPackageUpdate;
-import com.headwire.sling.multipackageupdate.MultiPackageUpdateResponse;
-import com.headwire.sling.multipackageupdate.PackagesListEndpoint;
+import com.headwire.sling.multipackageupdate.*;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.sling.event.jobs.Job;
 import org.apache.sling.event.jobs.JobManager;
@@ -37,8 +35,8 @@ import org.osgi.service.component.annotations.Reference;
 import java.util.HashMap;
 import java.util.Map;
 
-@Component(service = { MultiPackageUpdate.class, MultiPackageUpdateService.class })
-public final class MultiPackageUpdateService implements MultiPackageUpdate {
+@Component(service = { MultiPackageUpdate.class, ProcessPerformerListener.class })
+public final class MultiPackageUpdateService implements MultiPackageUpdate, ProcessPerformerListener {
 
     private static final String NO_UPDATE_NO_UPDATE_JOB_RUNNING_CURRENTLY = "No update job running currently";
 
@@ -49,7 +47,7 @@ public final class MultiPackageUpdateService implements MultiPackageUpdate {
 
     private Job currentJob;
 
-    private MultiPackageUpdateRunner currentRunner;
+    private ProcessPerformer currentPerformer;
 
     private String lastLogText;
 
@@ -60,12 +58,12 @@ public final class MultiPackageUpdateService implements MultiPackageUpdate {
                 return addJob(endpoint, subServiceName);
             }
 
-            if (currentRunner == null) {
+            if (currentPerformer == null) {
                 return new MultiPackageUpdateResponse("Update job already scheduled");
             }
 
             final MultiPackageUpdateResponse response = new MultiPackageUpdateResponse("Update job already in progress");
-            response.setLog(currentRunner.getLogText());
+            response.setLog(currentPerformer.getLogText());
             return response;
         }
     }
@@ -85,15 +83,15 @@ public final class MultiPackageUpdateService implements MultiPackageUpdate {
                 return new MultiPackageUpdateResponse("No update job scheduled");
             }
 
-            if (currentRunner == null) {
+            if (currentPerformer == null) {
                 jobManager.stopJobById(currentJob.getId());
                 currentJob = null;
                 return new MultiPackageUpdateResponse("Update job stopped");
             }
 
-            currentRunner.terminate();
+            currentPerformer.terminate();
             final MultiPackageUpdateResponse response = new MultiPackageUpdateResponse("Update job (in progress) marked for earlier termination");
-            response.setLog(currentRunner.getLogText());
+            response.setLog(currentPerformer.getLogText());
             return response;
         }
     }
@@ -101,11 +99,11 @@ public final class MultiPackageUpdateService implements MultiPackageUpdate {
     @Override
     public  MultiPackageUpdateResponse getCurrentStatus() {
         synchronized (lock) {
-            if (currentRunner == null) {
+            if (currentPerformer == null) {
                 return new MultiPackageUpdateResponse(NO_UPDATE_NO_UPDATE_JOB_RUNNING_CURRENTLY);
             } else {
                 final MultiPackageUpdateResponse response = new MultiPackageUpdateResponse("Update process in progress");
-                response.setLog(currentRunner.getLogText());
+                response.setLog(currentPerformer.getLogText());
                 return response;
             }
         }
@@ -119,22 +117,22 @@ public final class MultiPackageUpdateService implements MultiPackageUpdate {
         return response;
     }
 
-    public boolean setCurrentRunner(final MultiPackageUpdateRunner runner) {
+    public boolean setProcessPerformer(final ProcessPerformer runner) {
         synchronized (lock) {
             if (currentJob == null) {
                 return false;
             }
 
-            currentRunner = runner;
+            currentPerformer = runner;
         }
 
         return true;
     }
 
-    public void notifyUpdateProcessFinished(final String logText) {
+    public void notifyProcessFinished(final String logText) {
         synchronized(lock) {
             currentJob = null;
-            currentRunner = null;
+            currentPerformer = null;
             lastLogText = logText;
         }
     }

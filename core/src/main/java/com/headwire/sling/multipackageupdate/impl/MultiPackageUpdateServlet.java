@@ -58,7 +58,7 @@ public final class MultiPackageUpdateServlet extends SlingAllMethodsServlet {
 
     private static final long serialVersionUID = -1704915461516132101L;
 
-    private static final String SUB_SERVICE_NAME = "multipackageupdate";
+    public static final String SUB_SERVICE_NAME = "multipackageupdate";
 
     private static final String CMD = "cmd";
     private static final String START = "start";

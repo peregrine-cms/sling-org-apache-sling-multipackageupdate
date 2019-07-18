@@ -26,6 +26,8 @@ package com.headwire.sling.multipackageupdate.impl;
  */
 
 import com.headwire.sling.multipackageupdate.PackagesListEndpoint;
+import com.headwire.sling.multipackageupdate.ProcessPerformerListener;
+import com.headwire.sling.multipackageupdate.ProcessPerformer;
 import org.apache.commons.codec.Charsets;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -47,7 +49,7 @@ import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
-public final class MultiPackageUpdateRunner implements ProgressTrackerListener {
+public final class MultiPackageUpdateRunner implements ProgressTrackerListener, ProcessPerformer {
 
 	public static final String TERMINATED_BY_USER = "Update Runner terminated by user.";
 	public static final String NEW_LINE = "\n";
@@ -61,14 +63,14 @@ public final class MultiPackageUpdateRunner implements ProgressTrackerListener {
 	private final ImportOptions importOptions = new ImportOptions();
 
 	private final PackagesListEndpoint endpoint;
-	private final MultiPackageUpdateService listener;
+	private final ProcessPerformerListener listener;
 	private final Session session;
 
 	private JcrPackageManager packageManager;
 
 	private boolean terminate = false;
 
-	public MultiPackageUpdateRunner(final PackagesListEndpoint endpoint, final MultiPackageUpdateService listener, final Session session) {
+	public MultiPackageUpdateRunner(final PackagesListEndpoint endpoint, final Session session, final ProcessPerformerListener listener) {
 		this.endpoint = endpoint;
 		this.listener = listener;
 		this.session = session;
@@ -88,7 +90,7 @@ public final class MultiPackageUpdateRunner implements ProgressTrackerListener {
 			appendStackTrace(e);
 		}
 
-		listener.notifyUpdateProcessFinished(getLogText());
+		listener.notifyProcessFinished(getLogText());
 	}
 
 	private void append(final String... messages) {

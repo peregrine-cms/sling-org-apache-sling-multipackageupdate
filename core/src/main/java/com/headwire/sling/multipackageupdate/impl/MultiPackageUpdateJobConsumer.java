@@ -25,7 +25,10 @@ package com.headwire.sling.multipackageupdate.impl;
  * #L%
  */
 
+import com.headwire.sling.multipackageupdate.MultiPackageUpdatePerformerFactory;
 import com.headwire.sling.multipackageupdate.PackagesListEndpoint;
+import com.headwire.sling.multipackageupdate.ProcessPerformer;
+import com.headwire.sling.multipackageupdate.ProcessPerformerListener;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.sling.event.jobs.Job;
 import org.apache.sling.event.jobs.consumer.JobConsumer;
@@ -54,7 +57,10 @@ public final class MultiPackageUpdateJobConsumer implements JobConsumer {
 	private SlingRepository repository;
 
 	@Reference
-	private MultiPackageUpdateService multiPackageUpdateService;
+	private MultiPackageUpdatePerformerFactory multiPackageUpdatePerformerFactory;
+
+	@Reference
+	private ProcessPerformerListener processPerformerListener;
 
 	@Override
 	public JobResult process(final Job job) {
@@ -62,15 +68,16 @@ public final class MultiPackageUpdateJobConsumer implements JobConsumer {
 		final String subServiceName = job.getProperty(SUB_SERVICE_NAME, String.class);
 		try {
 			final Session session = repository.loginService(subServiceName, null);
-			final MultiPackageUpdateRunner thread = new MultiPackageUpdateRunner(endpoint, multiPackageUpdateService, session);
-			if (multiPackageUpdateService.setCurrentRunner(thread)) {
-				thread.run();
+			final ProcessPerformer performer = multiPackageUpdatePerformerFactory.createPerformer(endpoint, session, processPerformerListener);
+			if (processPerformerListener.setProcessPerformer(performer)) {
+				performer.run();
 			}
 
 			return JobResult.OK;
 		} catch (final RepositoryException e) {
 			logger.error(UNABLE_TO_OBTAIN_SESSION, e);
-			multiPackageUpdateService.notifyUpdateProcessFinished(ExceptionUtils.getStackTrace(e));
+			processPerformerListener.notifyProcessFinished(ExceptionUtils.getStackTrace(e));
+
 			return JobResult.CANCEL;
 		}
 	}
