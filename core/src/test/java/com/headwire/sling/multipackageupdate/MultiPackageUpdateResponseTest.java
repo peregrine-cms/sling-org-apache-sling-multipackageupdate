@@ -2,10 +2,7 @@ package com.headwire.sling.multipackageupdate;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.runners.MockitoJUnitRunner;
 
-@RunWith(MockitoJUnitRunner.class)
 public final class MultiPackageUpdateResponseTest {
 
     private static final String STATUS = "example status";
