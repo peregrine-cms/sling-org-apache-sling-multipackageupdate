@@ -5,8 +5,8 @@ import org.junit.Test;
 
 public class PackagesListEndpointTest {
 
-    private static final String SERVER_URL = "http://localhost:8080/content";
-    private static final String PACKAGES_TXT = "packages.txt";
+    public static final String SERVER_URL = "http://localhost:8080/content";
+    public static final String PACKAGES_TXT = "packages.txt";
     private static final String SAMPLE_PACKAGE = "package-1.0.0.zip";
 
     private final PackagesListEndpoint model = new PackagesListEndpoint(SERVER_URL, PACKAGES_TXT);
