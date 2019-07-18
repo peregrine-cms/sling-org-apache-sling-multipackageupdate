@@ -33,7 +33,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.SlingHttpServletResponse;
 import org.apache.sling.api.servlets.SlingAllMethodsServlet;
-import org.apache.sling.jcr.api.SlingRepository;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -60,17 +59,14 @@ public final class MultiPackageUpdateServlet extends SlingAllMethodsServlet {
 
     public static final String SUB_SERVICE_NAME = "multipackageupdate";
 
-    private static final String CMD = "cmd";
-    private static final String START = "start";
-    private static final String STOP = "stop";
-    private static final String CURRENT_STATUS = "currentStatus";
-    private static final String LAST_LOG = "lastLog";
+    public static final String CMD = "cmd";
+    public static final String START = "start";
+    public static final String STOP = "stop";
+    public static final String CURRENT_STATUS = "currentStatus";
+    public static final String LAST_LOG = "lastLog";
     private static final Set<String> AVAILABLE_COMMANDS = new HashSet<>(Arrays.asList(START, STOP, CURRENT_STATUS, LAST_LOG));
 
     private final transient Gson gson = new Gson();
-
-    @Reference
-    private transient SlingRepository repository;
 
     @Reference
     private transient MultiPackageUpdate updater;
