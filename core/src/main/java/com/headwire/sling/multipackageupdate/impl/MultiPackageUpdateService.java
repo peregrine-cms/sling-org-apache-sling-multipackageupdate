@@ -77,7 +77,7 @@ public final class MultiPackageUpdateService implements MultiPackageUpdate, Proc
     }
 
     @Override
-    public  MultiPackageUpdateResponse stop() {
+    public MultiPackageUpdateResponse stop() {
         synchronized (lock) {
             if (currentJob == null) {
                 return new MultiPackageUpdateResponse("No update job scheduled");
@@ -97,7 +97,7 @@ public final class MultiPackageUpdateService implements MultiPackageUpdate, Proc
     }
 
     @Override
-    public  MultiPackageUpdateResponse getCurrentStatus() {
+    public MultiPackageUpdateResponse getCurrentStatus() {
         synchronized (lock) {
             if (currentPerformer == null) {
                 return new MultiPackageUpdateResponse(NO_UPDATE_NO_UPDATE_JOB_RUNNING_CURRENTLY);
@@ -110,7 +110,7 @@ public final class MultiPackageUpdateService implements MultiPackageUpdate, Proc
     }
 
     @Override
-    public  MultiPackageUpdateResponse getLastLogText() {
+    public MultiPackageUpdateResponse getLastLogText() {
         final String status = StringUtils.isBlank(lastLogText) ? "No previous log available" :  "Last log";
         final MultiPackageUpdateResponse response = new MultiPackageUpdateResponse(status);
         response.setLog(lastLogText);
