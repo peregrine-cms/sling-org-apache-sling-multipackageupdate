@@ -26,14 +26,14 @@ of packages.
 
 #### Usage
 
-The servlet is exposed at [/bin/update-packages](http://localhost:8080/bin/update-packages)
+The servlet is exposed at [/bin/mpu/update.json](http://localhost:8080/bin/mpu/update.json)
 and needs a parameter named `cmd`, which can be one of the following:
-- [`start`](http://localhost:8080/bin/update-packages?cmd=start): to trigger the multi-package update process,
-- [`stop`](http://localhost:8080/bin/update-packages?cmd=stop): to stop the current update thread
+- [`start`](http://localhost:8080/bin/mpu/update.json?cmd=start): to trigger the multi-package update process,
+- [`stop`](http://localhost:8080/bin/mpu/update.json?cmd=stop): to stop the current update thread
 (if there is one running),
-- [`currentStatus`](http://localhost:8080/bin/update-packages?cmd=currentStatus):
+- [`currentStatus`](http://localhost:8080/bin/mpu/update.json?cmd=currentStatus):
 to see the current status (if there is a thread running),
-- [`lastLog`](http://localhost:8080/bin/update-packages?cmd=lastLog): to check the last log message.
+- [`lastLog`](http://localhost:8080/bin/mpu/update.json?cmd=lastLog): to check the last log message.
 
 #### Configuration
 
