@@ -37,6 +37,7 @@ import org.apache.sling.jcr.api.SlingRepository;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.metatype.annotations.Designate;
 
 import javax.servlet.Servlet;
 import java.io.IOException;
@@ -52,6 +53,7 @@ import static org.apache.sling.api.servlets.ServletResolverConstants.*;
                 SLING_SERVLET_RESOURCE_TYPES + "=multipackageupdate/update",
                 SLING_SERVLET_SELECTORS + "=json"
         })
+@Designate(ocd = MultiPackageUpdateServletConfig.class)
 public final class MultiPackageUpdateServlet extends SlingAllMethodsServlet {
 
     private static final long serialVersionUID = -1704915461516132101L;

@@ -26,7 +26,6 @@ package com.headwire.sling.multipackageupdate.impl;
  */
 
 import com.headwire.sling.multipackageupdate.PackagesListEndpoint;
-import com.headwire.sling.multipackageupdate.PackagesUpdatedListener;
 import org.apache.commons.codec.Charsets;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -48,28 +47,28 @@ import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
-public final class MultiPackageUpdateThread extends Thread implements ProgressTrackerListener {
+public final class MultiPackageUpdateRunner implements ProgressTrackerListener {
 
-	public static final String TERMINATED_BY_USER = "Update process terminated by user.";
+	public static final String TERMINATED_BY_USER = "Update Runner terminated by user.";
 	public static final String NEW_LINE = "\n";
 
 	private final Logger logger = LoggerFactory.getLogger(getClass());
 
 	private final SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
 
-	private final StringBuilder logText = new StringBuilder("Update Packages Thread created @ ");
+	private final StringBuilder logText = new StringBuilder("Update Runner created @ ");
 
 	private final ImportOptions importOptions = new ImportOptions();
 
 	private final PackagesListEndpoint endpoint;
-	private final PackagesUpdatedListener listener;
+	private final MultiPackageUpdateService listener;
 	private final Session session;
 
 	private JcrPackageManager packageManager;
 
 	private boolean terminate = false;
 
-	public MultiPackageUpdateThread(final PackagesListEndpoint endpoint, final PackagesUpdatedListener listener, final Session session) {
+	public MultiPackageUpdateRunner(final PackagesListEndpoint endpoint, final MultiPackageUpdateService listener, final Session session) {
 		this.endpoint = endpoint;
 		this.listener = listener;
 		this.session = session;
@@ -78,7 +77,6 @@ public final class MultiPackageUpdateThread extends Thread implements ProgressTr
 		importOptions.setListener(this);
 	}
 
-	@Override
 	public void run() {
 		packageManager = PackagingService.getPackageManager(session);
 		try {
@@ -90,7 +88,7 @@ public final class MultiPackageUpdateThread extends Thread implements ProgressTr
 			appendStackTrace(e);
 		}
 
-		listener.notifyPackagesUpdated(getLogText());
+		listener.notifyUpdateProcessFinished(getLogText());
 	}
 
 	private void append(final String... messages) {

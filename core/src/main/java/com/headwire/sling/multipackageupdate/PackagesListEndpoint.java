@@ -25,7 +25,9 @@ package com.headwire.sling.multipackageupdate;
  * #L%
  */
 
-public final class PackagesListEndpoint {
+import java.io.Serializable;
+
+public final class PackagesListEndpoint implements Serializable {
 
     private final String serverUrl;
     private final String packagesFileName;

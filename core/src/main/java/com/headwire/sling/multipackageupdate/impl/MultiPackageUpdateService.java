@@ -28,85 +28,84 @@ package com.headwire.sling.multipackageupdate.impl;
 import com.headwire.sling.multipackageupdate.MultiPackageUpdate;
 import com.headwire.sling.multipackageupdate.MultiPackageUpdateResponse;
 import com.headwire.sling.multipackageupdate.PackagesListEndpoint;
-import com.headwire.sling.multipackageupdate.PackagesUpdatedListener;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.exception.ExceptionUtils;
-import org.apache.sling.jcr.api.SlingRepository;
+import org.apache.sling.event.jobs.Job;
+import org.apache.sling.event.jobs.JobManager;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
-import org.osgi.service.metatype.annotations.Designate;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import javax.jcr.RepositoryException;
-import javax.jcr.Session;
+import java.util.HashMap;
+import java.util.Map;
 
-@Component(service = MultiPackageUpdate.class)
-@Designate(ocd = MultiPackageUpdateServletConfig.class)
-public final class MultiPackageUpdateService implements MultiPackageUpdate, PackagesUpdatedListener {
+@Component(service = { MultiPackageUpdate.class, MultiPackageUpdateService.class })
+public final class MultiPackageUpdateService implements MultiPackageUpdate {
 
-    private static final String UNABLE_TO_OBTAIN_SESSION = "Unable to obtain session";
-    private static final String NO_UPDATE_THREAD_RUNNING_CURRENTLY = "There is no update thread running currently";
+    private static final String NO_UPDATE_NO_UPDATE_JOB_RUNNING_CURRENTLY = "No update job running currently";
 
-    private final Logger logger = LoggerFactory.getLogger(getClass());
     private final Object lock = new Object();
 
     @Reference
-    private SlingRepository repository;
+    private JobManager jobManager;
 
-    private MultiPackageUpdateThread currentThread;
+    private Job currentJob;
+
+    private MultiPackageUpdateRunner currentRunner;
 
     private String lastLogText;
 
     @Override
     public MultiPackageUpdateResponse start(final PackagesListEndpoint endpoint, final String subServiceName) {
         synchronized(lock) {
-            if (currentThread == null) {
-                return startThread(endpoint, subServiceName);
-            } else {
-                final MultiPackageUpdateResponse response = new MultiPackageUpdateResponse("Update process already in progress");
-                response.setLog(currentThread.getLogText());
-                return response;
+            if (currentJob == null) {
+                return addJob(endpoint, subServiceName);
             }
+
+            if (currentRunner == null) {
+                return new MultiPackageUpdateResponse("Update job already scheduled");
+            }
+
+            final MultiPackageUpdateResponse response = new MultiPackageUpdateResponse("Update job already in progress");
+            response.setLog(currentRunner.getLogText());
+            return response;
         }
     }
 
-    private MultiPackageUpdateResponse startThread(final PackagesListEndpoint endpoint, final String subServiceName) {
-        try {
-            final Session session = repository.loginService(subServiceName, null);
-            currentThread = new MultiPackageUpdateThread(endpoint, this, session);
-            currentThread.start();
-            return new MultiPackageUpdateResponse("Update process started just now");
-        } catch (final RepositoryException e) {
-            logger.error(UNABLE_TO_OBTAIN_SESSION, e);
-            final MultiPackageUpdateResponse response = new MultiPackageUpdateResponse(UNABLE_TO_OBTAIN_SESSION);
-            response.setLog(ExceptionUtils.getStackTrace(e));
-            return response;
-        }
+    private MultiPackageUpdateResponse addJob(final PackagesListEndpoint endpoint, final String subServiceName) {
+        final Map<String, Object> params = new HashMap<>();
+        params.put(MultiPackageUpdateJobConsumer.ENDPOINT, endpoint);
+        params.put(MultiPackageUpdateJobConsumer.SUB_SERVICE_NAME, subServiceName);
+        currentJob = jobManager.addJob(MultiPackageUpdateJobConsumer.TOPIC, params);
+        return new MultiPackageUpdateResponse("Update job added just now");
     }
 
     @Override
     public  MultiPackageUpdateResponse stop() {
         synchronized (lock) {
-            if (currentThread == null) {
-                return new MultiPackageUpdateResponse(NO_UPDATE_THREAD_RUNNING_CURRENTLY);
-            } else {
-                currentThread.terminate();
-                final MultiPackageUpdateResponse response = new MultiPackageUpdateResponse("Update thread marked for earlier termination");
-                response.setLog(currentThread.getLogText());
-                return response;
+            if (currentJob == null) {
+                return new MultiPackageUpdateResponse("No update job scheduled");
             }
+
+            if (currentRunner == null) {
+                jobManager.stopJobById(currentJob.getId());
+                currentJob = null;
+                return new MultiPackageUpdateResponse("Update job stopped");
+            }
+
+            currentRunner.terminate();
+            final MultiPackageUpdateResponse response = new MultiPackageUpdateResponse("Update job (in progress) marked for earlier termination");
+            response.setLog(currentRunner.getLogText());
+            return response;
         }
     }
 
     @Override
     public  MultiPackageUpdateResponse getCurrentStatus() {
         synchronized (lock) {
-            if (currentThread == null) {
-                return new MultiPackageUpdateResponse(NO_UPDATE_THREAD_RUNNING_CURRENTLY);
+            if (currentRunner == null) {
+                return new MultiPackageUpdateResponse(NO_UPDATE_NO_UPDATE_JOB_RUNNING_CURRENTLY);
             } else {
                 final MultiPackageUpdateResponse response = new MultiPackageUpdateResponse("Update process in progress");
-                response.setLog(currentThread.getLogText());
+                response.setLog(currentRunner.getLogText());
                 return response;
             }
         }
@@ -120,11 +119,23 @@ public final class MultiPackageUpdateService implements MultiPackageUpdate, Pack
         return response;
     }
 
-    @Override
-    public void notifyPackagesUpdated(final String logText) {
+    public boolean setCurrentRunner(final MultiPackageUpdateRunner runner) {
+        synchronized (lock) {
+            if (currentJob == null) {
+                return false;
+            }
+
+            currentRunner = runner;
+        }
+
+        return true;
+    }
+
+    public void notifyUpdateProcessFinished(final String logText) {
         synchronized(lock) {
+            currentJob = null;
+            currentRunner = null;
             lastLogText = logText;
-            currentThread = null;
         }
     }
 }
