@@ -25,11 +25,25 @@ package com.headwire.sling.multipackageupdate;
  * #L%
  */
 
-public interface PackagesListEndpoint {
+public final class PackagesListEndpoint {
 
-    String getServerUrl();
+    private final String serverUrl;
+    private final String packagesFileName;
 
-    String getFileUrl(final String name);
+    public PackagesListEndpoint(final String serverUrl, final String packagesFileName) {
+        this.serverUrl = serverUrl;
+        this.packagesFileName = packagesFileName;
+    }
 
-    String getPackagesListUrl();
+    public String getServerUrl() {
+        return serverUrl;
+    }
+
+    public String getFileUrl(final String name) {
+        return getServerUrl() + "/" + name;
+    }
+
+    public String getPackagesListUrl() {
+        return getFileUrl(packagesFileName);
+    }
 }

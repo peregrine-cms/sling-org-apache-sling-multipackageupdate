@@ -52,7 +52,7 @@ import static org.apache.sling.api.servlets.ServletResolverConstants.*;
                 SLING_SERVLET_RESOURCE_TYPES + "=multipackageupdate/update",
                 SLING_SERVLET_SELECTORS + "=json"
         })
-public final class MultiPackageUpdateServlet extends SlingAllMethodsServlet implements PackagesListEndpoint {
+public final class MultiPackageUpdateServlet extends SlingAllMethodsServlet {
 
     private static final long serialVersionUID = -1704915461516132101L;
 
@@ -67,17 +67,17 @@ public final class MultiPackageUpdateServlet extends SlingAllMethodsServlet impl
 
     private final transient Gson gson = new Gson();
 
-    private transient MultiPackageUpdateServletConfig config;
-
     @Reference
     private transient SlingRepository repository;
 
     @Reference
     private transient MultiPackageUpdate updater;
 
+    private PackagesListEndpoint endpoint;
+
     @Activate
     public void activate(final MultiPackageUpdateServletConfig config) {
-        this.config = config;
+        endpoint = new PackagesListEndpoint(config.server_url(), config.filename());
     }
 
     @Override
@@ -96,7 +96,7 @@ public final class MultiPackageUpdateServlet extends SlingAllMethodsServlet impl
 
     private MultiPackageUpdateResponse execute(final String cmd) {
         if (StringUtils.equalsIgnoreCase(cmd, START)) {
-            return updater.start(this, SUB_SERVICE_NAME);
+            return updater.start(endpoint, SUB_SERVICE_NAME);
         }
 
         if (StringUtils.equalsIgnoreCase(cmd, STOP)) {
@@ -108,20 +108,5 @@ public final class MultiPackageUpdateServlet extends SlingAllMethodsServlet impl
         }
 
         return updater.getLastLogText();
-    }
-
-    @Override
-    public String getServerUrl() {
-        return config.server_url();
-    }
-
-    @Override
-    public String getFileUrl(final String name) {
-        return getServerUrl() + "/" + name;
-    }
-
-    @Override
-    public String getPackagesListUrl() {
-        return getFileUrl(config.filename());
     }
 }
