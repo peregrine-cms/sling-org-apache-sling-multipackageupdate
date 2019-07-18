@@ -26,8 +26,8 @@ package com.headwire.sling.multipackageupdate.impl;
  */
 
 import com.headwire.sling.multipackageupdate.PackagesListEndpoint;
-import com.headwire.sling.multipackageupdate.ProcessPerformerListener;
 import com.headwire.sling.multipackageupdate.ProcessPerformer;
+import com.headwire.sling.multipackageupdate.ProcessPerformerListener;
 import org.apache.commons.codec.Charsets;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -37,19 +37,17 @@ import org.apache.jackrabbit.vault.fs.io.ImportOptions;
 import org.apache.jackrabbit.vault.packaging.JcrPackage;
 import org.apache.jackrabbit.vault.packaging.JcrPackageManager;
 import org.apache.jackrabbit.vault.packaging.PackageException;
-import org.apache.jackrabbit.vault.packaging.PackagingService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.jcr.RepositoryException;
-import javax.jcr.Session;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
-public final class MultiPackageUpdateRunner implements ProgressTrackerListener, ProcessPerformer {
+public final class MultiPackageUpdatePerformer implements ProgressTrackerListener, ProcessPerformer {
 
 	public static final String TERMINATED_BY_USER = "Update Runner terminated by user.";
 	public static final String NEW_LINE = "\n";
@@ -64,23 +62,21 @@ public final class MultiPackageUpdateRunner implements ProgressTrackerListener, 
 
 	private final PackagesListEndpoint endpoint;
 	private final ProcessPerformerListener listener;
-	private final Session session;
-
-	private JcrPackageManager packageManager;
+	private final JcrPackageManager packageManager;
 
 	private boolean terminate = false;
 
-	public MultiPackageUpdateRunner(final PackagesListEndpoint endpoint, final Session session, final ProcessPerformerListener listener) {
+	public MultiPackageUpdatePerformer(final PackagesListEndpoint endpoint, final JcrPackageManager packageManager, final ProcessPerformerListener listener) {
 		this.endpoint = endpoint;
 		this.listener = listener;
-		this.session = session;
+		this.packageManager = packageManager;
 		appendCurrentTime();
 		endSentence();
 		importOptions.setListener(this);
 	}
 
+	@Override
 	public void run() {
-		packageManager = PackagingService.getPackageManager(session);
 		try {
 			process();
 		} catch (final IOException | RepositoryException | PackageException e) {
@@ -166,10 +162,12 @@ public final class MultiPackageUpdateRunner implements ProgressTrackerListener, 
 		appendNewLine();
 	}
 
+	@Override
 	public String getLogText() {
 		return logText.toString();
 	}
 
+	@Override
 	public void terminate() {
 		terminate = true;
 	}
