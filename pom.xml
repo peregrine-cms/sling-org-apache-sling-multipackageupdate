@@ -226,7 +226,7 @@
 					<configuration>
 						<failOnMissingEmbed>true</failOnMissingEmbed>
 						<force>true</force>
-						<group>org.apache.sling</group>
+						<group>${project.groupId}</group>
 					</configuration>
 				</plugin>
 				<plugin>
@@ -239,7 +239,7 @@
 						<password>${sling.password}</password>
 						<failOnMissingEmbed>true</failOnMissingEmbed>
 						<force>true</force>
-						<group>org.apache.sling</group>
+						<group>${project.groupId}</group>
 					</configuration>
 				</plugin>
 				<!-- Apache Felix Bundle Plugin -->
