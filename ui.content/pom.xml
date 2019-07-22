@@ -39,8 +39,8 @@
 	<artifactId>ui.content</artifactId>
 	<packaging>content-package</packaging>
 
-	<name>Multi Package Update - UI Apps</name>
-	<description>UI Content part of Multi Package Update.</description>
+	<name>Multi Package Update - Sample Content</name>
+	<description>Sample Content part of Multi Package Update.</description>
 
 	<build>
 		<plugins>
@@ -67,7 +67,7 @@
 	</build>
 	<profiles>
 		<profile>
-			<id>autoInstallPackage</id>
+			<id>autoInstallContentPackage</id>
 			<build>
 				<plugins>
 					<plugin>
