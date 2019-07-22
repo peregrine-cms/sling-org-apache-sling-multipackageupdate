@@ -71,10 +71,13 @@ public final class MultiPackageUpdateServlet extends SlingAllMethodsServlet {
     @Reference
     private transient MultiPackageUpdate updater;
 
+    private MultiPackageUpdateServletConfig config;
+
     private PackagesListEndpoint endpoint;
 
     @Activate
     public void activate(final MultiPackageUpdateServletConfig config) {
+        this.config = config;
         endpoint = new PackagesListEndpoint(config.serverUrl(), config.filename());
     }
 
@@ -94,7 +97,7 @@ public final class MultiPackageUpdateServlet extends SlingAllMethodsServlet {
 
     private MultiPackageUpdateResponse execute(final String cmd) {
         if (StringUtils.equalsIgnoreCase(cmd, START)) {
-            return updater.start(endpoint, SUB_SERVICE_NAME);
+            return updater.start(endpoint, SUB_SERVICE_NAME, config.maxRetriesCount());
         }
 
         if (StringUtils.equalsIgnoreCase(cmd, STOP)) {

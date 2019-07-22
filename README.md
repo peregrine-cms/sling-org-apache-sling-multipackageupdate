@@ -42,7 +42,8 @@ The main required configuration is that of
 - **Server with Packages**: the full `URL` of the location of both packages and the listing file from below.
 An example value could be `http://localhost:8080/content`,
 - **Packages List File Name**: the name of a text file, located under the above path, containing
-the list of packages names to be installed. An example value could be `packages.txt`.
+the list of packages names to be installed. An example value could be `packages.txt`,
+- **Max Retries**: maximum number of retries to install a single package.
 
 ##### Service User Mapping
 

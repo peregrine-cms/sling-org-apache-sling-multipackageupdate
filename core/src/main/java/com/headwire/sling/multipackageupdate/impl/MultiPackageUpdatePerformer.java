@@ -49,7 +49,6 @@ import java.util.Calendar;
 
 public final class MultiPackageUpdatePerformer implements ProgressTrackerListener, ProcessPerformer {
 
-	public static final String TERMINATED_BY_USER = "Update Runner terminated by user.";
 	public static final String NEW_LINE = "\n";
 
 	private final Logger logger = LoggerFactory.getLogger(getClass());
@@ -63,13 +62,16 @@ public final class MultiPackageUpdatePerformer implements ProgressTrackerListene
 	private final PackagesListEndpoint endpoint;
 	private final ProcessPerformerListener listener;
 	private final JcrPackageManager packageManager;
+	private final int maxRetriesCount;
 
 	private boolean terminate = false;
+	private boolean appendTerminatedByUserCalled = false;
 
-	public MultiPackageUpdatePerformer(final PackagesListEndpoint endpoint, final JcrPackageManager packageManager, final ProcessPerformerListener listener) {
+	public MultiPackageUpdatePerformer(final PackagesListEndpoint endpoint, final JcrPackageManager packageManager, final ProcessPerformerListener listener, final int maxRetriesCount) {
 		this.endpoint = endpoint;
 		this.listener = listener;
 		this.packageManager = packageManager;
+		this.maxRetriesCount = maxRetriesCount;
 		appendCurrentTime();
 		endSentence();
 		importOptions.setListener(this);
@@ -89,8 +91,8 @@ public final class MultiPackageUpdatePerformer implements ProgressTrackerListene
 		listener.notifyProcessFinished(getLogText());
 	}
 
-	private void append(final String... messages) {
-		for (final String message : messages) {
+	private void append(final Object... messages) {
+		for (final Object message : messages) {
 			logText.append(message);
 		}
 	}
@@ -99,7 +101,7 @@ public final class MultiPackageUpdatePerformer implements ProgressTrackerListene
 		append(dateFormat.format(Calendar.getInstance().getTime()));
 	}
 
-	private void appendNewLine(final String... messages) {
+	private void appendNewLine(final Object... messages) {
 		append(messages);
 		append(NEW_LINE);
 	}
@@ -108,7 +110,7 @@ public final class MultiPackageUpdatePerformer implements ProgressTrackerListene
 		appendNewLine(".");
 	}
 
-	private void appendSentence(final String... messages) {
+	private void appendSentence(final Object... messages) {
 		append(messages);
 		endSentence();
 	}
@@ -117,37 +119,67 @@ public final class MultiPackageUpdatePerformer implements ProgressTrackerListene
 		append(ExceptionUtils.getStackTrace(e));
 	}
 
+	private void appendTerminatedByUser() {
+		if (!appendTerminatedByUserCalled) {
+			append("Update Runner terminated by user.");
+		}
+
+		appendTerminatedByUserCalled = true;
+	}
+
 	private void process() throws IOException, RepositoryException, PackageException {
-		final String packagesListUrl = endpoint.getPackagesListUrl();
-		appendSentence("Downloading packages names from: ", packagesListUrl);
-		for (final String packageName : getPackagesNames(packagesListUrl)) {
+		for (final String packageName : getPackagesNames()) {
 			if (terminate) {
-				append(TERMINATED_BY_USER);
+				appendTerminatedByUser();
 				return;
 			}
 
-			appendSentence("Downloading package: ", packageName);
-			final InputStream stream = downloadPackage(packageName);
-			final JcrPackage pack = packageManager.upload(stream, true);
-			if (terminate) {
-				append(TERMINATED_BY_USER);
-				return;
-			}
-
-			appendSentence("Installing package: ", packageName);
-			pack.install(importOptions);
+			appendSentence("Processing package: ", packageName);
+			installPackageWithRetries(endpoint.getFileUrl(packageName));
 		}
 	}
 
-	private String[] getPackagesNames(final String url) throws IOException {
+	private String[] getPackagesNames() throws IOException {
+		final String url = endpoint.getPackagesListUrl();
+		appendSentence("Downloading packages names from: ", url);
 		String packagesText = IOUtils.toString(new URL(url), Charsets.UTF_8);
 		packagesText = StringUtils.trimToEmpty(packagesText);
 		return StringUtils.split(packagesText, NEW_LINE);
 	}
 
-	private InputStream downloadPackage(final String name) throws IOException {
-		final String url = endpoint.getFileUrl(name);
-		return new URL(url).openStream();
+	private void installPackageWithRetries(final String url) throws IOException, RepositoryException, PackageException {
+		boolean installed = false;
+		for (int i = 1; !installed && i <= maxRetriesCount; i++) {
+			if (terminate) {
+				appendTerminatedByUser();
+				return;
+			}
+
+			appendSentence("Attempt: ", i);
+			try {
+				installPackage(url);
+				installed = true;
+			} catch (final IOException | RepositoryException | PackageException e) {
+				if (i < maxRetriesCount) {
+					appendStackTrace(e);
+				} else {
+					throw e;
+				}
+			}
+		}
+	}
+
+	private void installPackage(final String url) throws IOException, RepositoryException, PackageException {
+		appendSentence("Downloading & uploading package: ", url);
+		final InputStream stream = new URL(url).openStream();
+		final JcrPackage pack = packageManager.upload(stream, true);
+		if (terminate) {
+			appendTerminatedByUser();
+			return;
+		}
+
+		appendSentence("Installing package: ", url);
+		pack.install(importOptions);
 	}
 
 	@Override

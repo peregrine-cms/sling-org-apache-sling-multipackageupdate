@@ -52,10 +52,10 @@ public final class MultiPackageUpdateService implements MultiPackageUpdate, Proc
     private String lastLogText;
 
     @Override
-    public MultiPackageUpdateResponse start(final PackagesListEndpoint endpoint, final String subServiceName) {
+    public MultiPackageUpdateResponse start(final PackagesListEndpoint endpoint, final String subServiceName, final int retryCounter) {
         synchronized(lock) {
             if (currentJob == null) {
-                return addJob(endpoint, subServiceName);
+                return addJob(endpoint, subServiceName, retryCounter);
             }
 
             if (currentPerformer == null) {
@@ -68,10 +68,11 @@ public final class MultiPackageUpdateService implements MultiPackageUpdate, Proc
         }
     }
 
-    private MultiPackageUpdateResponse addJob(final PackagesListEndpoint endpoint, final String subServiceName) {
+    private MultiPackageUpdateResponse addJob(final PackagesListEndpoint endpoint, final String subServiceName, final int maxRetriesCount) {
         final Map<String, Object> params = new HashMap<>();
         params.put(MultiPackageUpdateJobConsumer.ENDPOINT, endpoint);
         params.put(MultiPackageUpdateJobConsumer.SUB_SERVICE_NAME, subServiceName);
+        params.put(MultiPackageUpdateJobConsumer.MAX_RETRIES_COUNT, maxRetriesCount);
         currentJob = jobManager.addJob(MultiPackageUpdateJobConsumer.TOPIC, params);
         return new MultiPackageUpdateResponse("Update job added just now");
     }

@@ -46,14 +46,14 @@ public final class MultiPackageUpdateServiceTest {
 
     @Test
     public void start() {
-        MultiPackageUpdateResponse response = model.start(endpoint, subServiceName);
+        MultiPackageUpdateResponse response = model.start(endpoint, subServiceName, 1);
         assertNull(response.getLog());
 
-        response = model.start(endpoint, subServiceName);
+        response = model.start(endpoint, subServiceName, 1);
         assertNull(response.getLog());
 
         model.setProcessPerformer(performer);
-        response = model.start(endpoint, subServiceName);
+        response = model.start(endpoint, subServiceName, 1);
         assertNotNull(response.getLog());
     }
 
@@ -62,11 +62,11 @@ public final class MultiPackageUpdateServiceTest {
         MultiPackageUpdateResponse response = model.stop();
         assertNull(response.getLog());
 
-        model.start(endpoint, subServiceName);
+        model.start(endpoint, subServiceName, 1);
         response = model.stop();
         assertNull(response.getLog());
 
-        model.start(endpoint, subServiceName);
+        model.start(endpoint, subServiceName, 1);
         model.setProcessPerformer(performer);
         response = model.stop();
         assertNotNull(response.getLog());
@@ -79,7 +79,7 @@ public final class MultiPackageUpdateServiceTest {
 
     @Test
     public void getCurrentStatus() {
-        model.start(endpoint, subServiceName);
+        model.start(endpoint, subServiceName, 1);
         model.setProcessPerformer(performer);
         assertNotNull(model.getCurrentStatus().getLog());
     }

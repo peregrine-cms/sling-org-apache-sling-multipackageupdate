@@ -4,6 +4,6 @@ import javax.jcr.Session;
 
 public interface MultiPackageUpdatePerformerFactory {
 
-    ProcessPerformer createPerformer(PackagesListEndpoint endpoint, Session session, ProcessPerformerListener listener);
+    ProcessPerformer createPerformer(PackagesListEndpoint endpoint, Session session, ProcessPerformerListener listener, int maxRetriesCount);
 
 }

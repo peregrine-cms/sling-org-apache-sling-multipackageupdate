@@ -64,7 +64,7 @@ public final class MultiPackageUpdateServletTest {
     @Test
     public void doPost_start() throws IOException {
         doPost(MultiPackageUpdateServlet.START);
-        verify(updater).start(any(PackagesListEndpoint.class), anyString());
+        verify(updater).start(any(PackagesListEndpoint.class), anyString(), anyInt());
         verifyWriteHappened();
     }
 

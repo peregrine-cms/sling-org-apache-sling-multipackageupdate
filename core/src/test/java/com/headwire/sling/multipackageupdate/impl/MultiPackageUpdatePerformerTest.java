@@ -28,7 +28,7 @@ public final class MultiPackageUpdatePerformerTest {
     private final PackagesListEndpoint endpoint = new PackagesListEndpoint(SERVER_URL, PackagesListEndpointTest.PACKAGES_TXT);
     private final JcrPackageManager packageManager = mock(JcrPackageManager.class);
     private final ProcessPerformerListener listener = mock(ProcessPerformerListener.class);
-    private final MultiPackageUpdatePerformer model = new MultiPackageUpdatePerformer(endpoint, packageManager, listener);
+    private final MultiPackageUpdatePerformer model = new MultiPackageUpdatePerformer(endpoint, packageManager, listener, 1);
 
     @Mock
     private JcrPackage pack;
@@ -41,7 +41,7 @@ public final class MultiPackageUpdatePerformerTest {
     @Test
     public void run_noPackages() throws IOException, RepositoryException {
         final PackagesListEndpoint endpoint = new PackagesListEndpoint(SERVER_URL, null);
-        final MultiPackageUpdatePerformer model = new MultiPackageUpdatePerformer(endpoint, packageManager, listener);
+        final MultiPackageUpdatePerformer model = new MultiPackageUpdatePerformer(endpoint, packageManager, listener, 1);
     	model.run();
     	verify(packageManager, never()).upload(any(InputStream.class), anyBoolean());
     }

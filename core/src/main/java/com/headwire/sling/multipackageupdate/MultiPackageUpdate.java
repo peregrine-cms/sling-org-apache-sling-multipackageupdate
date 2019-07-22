@@ -27,7 +27,7 @@ package com.headwire.sling.multipackageupdate;
 
 public interface MultiPackageUpdate {
 
-    MultiPackageUpdateResponse start(PackagesListEndpoint endpoint, String subServiceName);
+    MultiPackageUpdateResponse start(PackagesListEndpoint endpoint, String subServiceName, int maxRetriesCount);
 
     MultiPackageUpdateResponse stop();
 

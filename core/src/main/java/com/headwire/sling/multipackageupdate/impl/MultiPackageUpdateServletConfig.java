@@ -36,4 +36,7 @@ public @interface MultiPackageUpdateServletConfig {
 
 	@AttributeDefinition(name = "%filename.name", description = "%filename.description")
 	String filename() default "packages.txt";
+
+	@AttributeDefinition(name = "%maxRetriesCount.name", description = "%maxRetriesCount.description")
+	int maxRetriesCount() default 1;
 }

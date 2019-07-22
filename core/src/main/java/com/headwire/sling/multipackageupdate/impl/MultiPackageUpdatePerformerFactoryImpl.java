@@ -14,9 +14,9 @@ public final class MultiPackageUpdatePerformerFactoryImpl implements MultiPackag
     private JcrPackageManagerFactory jcrPackageManagerFactory;
 
     @Override
-    public ProcessPerformer createPerformer(PackagesListEndpoint endpoint, Session session, ProcessPerformerListener listener) {
+    public ProcessPerformer createPerformer(PackagesListEndpoint endpoint, Session session, ProcessPerformerListener listener, final int maxRetriesCount) {
         final JcrPackageManager packageManager = jcrPackageManagerFactory.createJcrPackageManager(session);
-        return new MultiPackageUpdatePerformer(endpoint, packageManager, listener);
+        return new MultiPackageUpdatePerformer(endpoint, packageManager, listener, maxRetriesCount);
     }
 
 }

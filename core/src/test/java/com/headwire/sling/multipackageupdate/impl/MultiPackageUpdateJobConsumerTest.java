@@ -59,11 +59,13 @@ public class MultiPackageUpdateJobConsumerTest {
                 .thenReturn(endpoint);
         when(job.getProperty(MultiPackageUpdateJobConsumer.SUB_SERVICE_NAME, String.class))
                 .thenReturn(subServiceName);
+        when(job.getProperty(MultiPackageUpdateJobConsumer.MAX_RETRIES_COUNT, 1))
+                .thenReturn(1);
 
         when(repository.loginService(subServiceName, null))
                 .thenReturn(session);
 
-        when(multiPackageUpdatePerformerFactory.createPerformer(endpoint, session, processPerformerListener))
+        when(multiPackageUpdatePerformerFactory.createPerformer(eq(endpoint), eq(session), eq(processPerformerListener), anyInt()))
                 .thenReturn(performer);
     }
 

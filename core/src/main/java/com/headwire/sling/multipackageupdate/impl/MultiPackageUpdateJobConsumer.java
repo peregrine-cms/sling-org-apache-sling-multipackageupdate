@@ -48,6 +48,7 @@ public final class MultiPackageUpdateJobConsumer implements JobConsumer {
 	public static final String TOPIC = "com/headwire/sling/multipackageupdate/UPDATE";
 	public static final String ENDPOINT = "endpoint";
 	public static final String SUB_SERVICE_NAME = "subServiceName";
+	public static final String MAX_RETRIES_COUNT = "maxRetriesCount";
 
 	private static final String UNABLE_TO_OBTAIN_SESSION = "Unable to obtain session";
 
@@ -66,9 +67,10 @@ public final class MultiPackageUpdateJobConsumer implements JobConsumer {
 	public JobResult process(final Job job) {
 		final PackagesListEndpoint endpoint = job.getProperty(ENDPOINT, PackagesListEndpoint.class);
 		final String subServiceName = job.getProperty(SUB_SERVICE_NAME, String.class);
+		final int maxRetriesCount = job.getProperty(MAX_RETRIES_COUNT, 1);
 		try {
 			final Session session = repository.loginService(subServiceName, null);
-			final ProcessPerformer performer = multiPackageUpdatePerformerFactory.createPerformer(endpoint, session, processPerformerListener);
+			final ProcessPerformer performer = multiPackageUpdatePerformerFactory.createPerformer(endpoint, session, processPerformerListener, maxRetriesCount);
 			if (processPerformerListener.setProcessPerformer(performer)) {
 				performer.run();
 			}

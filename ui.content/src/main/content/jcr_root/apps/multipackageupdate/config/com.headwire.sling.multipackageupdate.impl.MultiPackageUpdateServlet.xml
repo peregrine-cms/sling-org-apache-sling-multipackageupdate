@@ -27,4 +27,5 @@
 	jcr:primaryType="sling:OsgiConfig"
 	serverUrl="http://localhost:8080/content/multipackageupdate"
 	filename="packages.txt"
+	maxRetriesCount="3"
 />
