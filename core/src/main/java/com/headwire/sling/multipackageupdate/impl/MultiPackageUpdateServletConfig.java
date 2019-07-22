@@ -31,8 +31,8 @@ import org.osgi.service.metatype.annotations.ObjectClassDefinition;
 @ObjectClassDefinition(name = "%config.name", description = "%config.description")
 public @interface MultiPackageUpdateServletConfig {
 
-	@AttributeDefinition(name = "%server.name", description = "%server.description")
-	String server_url();
+	@AttributeDefinition(name = "%serverUrl.name", description = "%serverUrl.description")
+	String serverUrl();
 
 	@AttributeDefinition(name = "%filename.name", description = "%filename.description")
 	String filename() default "packages.txt";

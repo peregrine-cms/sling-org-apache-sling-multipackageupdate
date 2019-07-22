@@ -25,6 +25,6 @@
   -->
 <jcr:root xmlns:jcr="http://www.jcp.org/jcr/1.0" xmlns:sling="http://sling.apache.org/jcr/sling/1.0"
 	jcr:primaryType="sling:OsgiConfig"
-	server.url="http://localhost:8080/content/multipackageupdate"
+	serverUrl="http://localhost:8080/content/multipackageupdate"
 	filename="packages.txt"
 />

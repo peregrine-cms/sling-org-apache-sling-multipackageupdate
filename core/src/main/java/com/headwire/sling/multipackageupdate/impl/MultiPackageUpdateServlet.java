@@ -75,7 +75,7 @@ public final class MultiPackageUpdateServlet extends SlingAllMethodsServlet {
 
     @Activate
     public void activate(final MultiPackageUpdateServletConfig config) {
-        endpoint = new PackagesListEndpoint(config.server_url(), config.filename());
+        endpoint = new PackagesListEndpoint(config.serverUrl(), config.filename());
     }
 
     @Override
