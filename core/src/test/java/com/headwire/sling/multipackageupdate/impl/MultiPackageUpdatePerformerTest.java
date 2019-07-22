@@ -28,7 +28,7 @@ public final class MultiPackageUpdatePerformerTest {
     private final PackagesListEndpoint endpoint = new PackagesListEndpoint(SERVER_URL, PackagesListEndpointTest.PACKAGES_TXT);
     private final JcrPackageManager packageManager = mock(JcrPackageManager.class);
     private final ProcessPerformerListener listener = mock(ProcessPerformerListener.class);
-    private final MultiPackageUpdatePerformer model = new MultiPackageUpdatePerformer(endpoint, packageManager, listener, 1);
+    private final MultiPackageUpdatePerformer model = new MultiPackageUpdatePerformer(endpoint, packageManager, listener, 3);
 
     @Mock
     private JcrPackage pack;
@@ -81,8 +81,34 @@ public final class MultiPackageUpdatePerformerTest {
         when(packageManager.upload(any(InputStream.class), anyBoolean()))
                 .thenAnswer(invocation -> {
                     model.terminate();
+                    throw new RepositoryException();
+                });
+        model.run();
+        verify(pack, never()).install(any(ImportOptions.class));
+    }
+
+    @Test
+    public void terminate_thirdOccurrence() throws IOException, RepositoryException, PackageException {
+        when(packageManager.upload(any(InputStream.class), anyBoolean()))
+                .thenAnswer(invocation -> {
+                    model.terminate();
                     return pack;
                 });
+        model.run();
+        verify(pack, never()).install(any(ImportOptions.class));
+    }
+
+    @Test
+    public void failAllRetries() throws IOException, RepositoryException, PackageException {
+        when(packageManager.upload(any(InputStream.class), anyBoolean()))
+                .thenThrow(new RepositoryException());
+        model.run();
+        verify(pack, never()).install(any(ImportOptions.class));
+    }
+
+    @Test
+    public void cover0Retries() throws IOException, RepositoryException, PackageException {
+    	final MultiPackageUpdatePerformer model = new MultiPackageUpdatePerformer(endpoint, packageManager, listener, 0);
         model.run();
         verify(pack, never()).install(any(ImportOptions.class));
     }

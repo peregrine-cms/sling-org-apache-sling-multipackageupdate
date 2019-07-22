@@ -148,8 +148,7 @@ public final class MultiPackageUpdatePerformer implements ProgressTrackerListene
 	}
 
 	private void installPackageWithRetries(final String url) throws IOException, RepositoryException, PackageException {
-		boolean installed = false;
-		for (int i = 1; !installed && i <= maxRetriesCount; i++) {
+		for (int i = 1; i <= maxRetriesCount; i++) {
 			if (terminate) {
 				appendTerminatedByUser();
 				return;
@@ -158,7 +157,7 @@ public final class MultiPackageUpdatePerformer implements ProgressTrackerListene
 			appendSentence("Attempt: ", i);
 			try {
 				installPackage(url);
-				installed = true;
+				break;
 			} catch (final IOException | RepositoryException | PackageException e) {
 				if (i < maxRetriesCount) {
 					appendStackTrace(e);
