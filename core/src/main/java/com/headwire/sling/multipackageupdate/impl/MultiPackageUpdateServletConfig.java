@@ -32,7 +32,7 @@ import org.osgi.service.metatype.annotations.ObjectClassDefinition;
 public @interface MultiPackageUpdateServletConfig {
 
 	@AttributeDefinition(name = "%server.name", description = "%server.description")
-	String server_url() default "https://vagrant.headwire.com/peregrine";
+	String server_url();
 
 	@AttributeDefinition(name = "%filename.name", description = "%filename.description")
 	String filename() default "packages.txt";
