@@ -28,4 +28,6 @@
         <include pattern="/rep:policy/sling-multipackageupdate" />
         <exclude pattern="/rep:policy/.*" />
     </filter>
+    <filter root="/apps/multipackageupdate/config/com.headwire.sling.multipackageupdate.impl.MultiPackageUpdateServlet" />
+    <filter root="/content/multipackageupdate" />
 </workspaceFilter>

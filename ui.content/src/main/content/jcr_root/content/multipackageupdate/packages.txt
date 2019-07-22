@@ -1,0 +1,2 @@
+test-app-1.0.0.zip
+test-content-1.0.0.zip
