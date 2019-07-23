@@ -39,7 +39,8 @@ import static com.headwire.sling.multipackageupdate.MPUConstants.PROJECT_NAME;
 
 @Component(service = Servlet.class,
         property = {
-                MultiPackageUpdateServlet.SERVLET_METHODS_PROPERTY,
+                MultiPackageUpdateServlet.SERVLET_METHODS_PROPERTY_GET,
+                MultiPackageUpdateServlet.SERVLET_METHODS_PROPERTY_POST,
                 MultiPackageUpdateServlet.RESOURCE_TYPES_PROPERTY_PREFIX + "start",
                 MultiPackageUpdateServlet.SERVLET_EXTENSIONS_PROPERTY
         })

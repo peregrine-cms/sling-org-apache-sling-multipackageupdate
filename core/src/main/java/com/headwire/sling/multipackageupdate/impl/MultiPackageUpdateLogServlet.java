@@ -34,7 +34,7 @@ import javax.servlet.Servlet;
 
 @Component(service = Servlet.class,
         property = {
-                MultiPackageUpdateServlet.SERVLET_METHODS_PROPERTY,
+                MultiPackageUpdateServlet.SERVLET_METHODS_PROPERTY_GET,
                 MultiPackageUpdateServlet.RESOURCE_TYPES_PROPERTY_PREFIX + "log",
                 MultiPackageUpdateServlet.SERVLET_EXTENSIONS_PROPERTY
         })

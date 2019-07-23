@@ -41,19 +41,26 @@ public abstract class MultiPackageUpdateServlet extends SlingAllMethodsServlet {
 
     private static final long serialVersionUID = -1704915461516132101L;
 
-    protected static final String SERVLET_METHODS_PROPERTY = SLING_SERVLET_METHODS + EQUALS + POST;
+    protected static final String SERVLET_METHODS_PROPERTY_GET = SLING_SERVLET_METHODS + EQUALS + GET;
+    protected static final String SERVLET_METHODS_PROPERTY_POST = SLING_SERVLET_METHODS + EQUALS + POST;
     protected static final String RESOURCE_TYPES_PROPERTY_PREFIX = SLING_SERVLET_RESOURCE_TYPES + EQUALS + PROJECT_NAME + SLASH;
     protected static final String SERVLET_EXTENSIONS_PROPERTY = SLING_SERVLET_EXTENSIONS + EQUALS + JSON;
 
     private final transient Gson gson = new Gson();
 
     @Override
-    protected void doPost(final SlingHttpServletRequest request, final SlingHttpServletResponse response)
+    protected void doGet(final SlingHttpServletRequest request, final SlingHttpServletResponse response)
             throws IOException {
         final MultiPackageUpdateResponse result = execute();
         response.setContentType("application/json");
         response.setCharacterEncoding("utf-8");
         response.getWriter().write(gson.toJson(result));
+    }
+
+    @Override
+    protected void doPost(final SlingHttpServletRequest request, final SlingHttpServletResponse response)
+            throws IOException {
+        doGet(request, response);
     }
 
     protected abstract MultiPackageUpdateResponse execute();
