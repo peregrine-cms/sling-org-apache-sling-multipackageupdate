@@ -1,24 +1,5 @@
 ### Multi Package Update
 
-#### License
-
-    Licensed to the Apache Software Foundation (ASF) under one
-    or more contributor license agreements.  See the NOTICE file
-    distributed with this work for additional information
-    regarding copyright ownership.  The ASF licenses this file
-    to you under the Apache License, Version 2.0 (the
-    "License"); you may not use this file except in compliance
-    with the License.  You may obtain a copy of the License at
-
-    http://www.apache.org/licenses/LICENSE-2.0
-
-    Unless required by applicable law or agreed to in writing,
-    software distributed under the License is distributed on an
-    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-    KIND, either express or implied.  See the License for the
-    specific language governing permissions and limitations
-    under the License.
-
 #### Introduction
 
 This project delivers a simple servlet mechanism to perform an installation of a given list of packages.
@@ -53,11 +34,17 @@ privileges allowing for `package` upload and installation.
 
 ##### Packages List File
 
-The packages list file is a simple text file containing packages names in each line, e.g.
+The packages list file is a simple text file containing packages names or `URL`s in each line, e.g.
 
     my-app-package-1.0.0.zip
-    my-content-package-1.0.0.zip
-    my-acl-package-1.0.0.zip
+    http://localhost:8080/content/multipackageupdate/my-content-package-1.0.0.zip
+    https://localhost:8080/content/multipackageupdate/my-acl-package-1.0.0.zip
+
+##### Sample Configuration
+
+The module `ui.content` contains a full set of test files and configurations that should simply work upon installation of
+the `package`. Right after calling [`/bin/mpu/start`](http://localhost:8080/bin/mpu/start.json) successfully one should be
+able to see [/content/multipackageupdate/test.html](http://localhost:8080/content/multipackageupdate/test.html) page.
 
 #### Build and Installation
 
@@ -65,11 +52,15 @@ The project is built quite simple:
 
     mvn clean install
     
-To install the OSGi bundle use the project **autoInstallBundle**:
+To install the OSGi bundle use the profile `autoInstallBundle`:
 
     mvn clean install -P autoInstallBundle
 
-To install the Content together with the core bundle use the project **autoInstallPackage**:
+To install the content together with the core bundle use the profile `autoInstallPackage`:
+
+    mvn clean install -P autoInstallPackage
+
+To install the sample configuration and content use the profile `autoInstallContentPackage`:
 
     mvn clean install -P autoInstallPackage
 
