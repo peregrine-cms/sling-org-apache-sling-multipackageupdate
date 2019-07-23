@@ -25,6 +25,8 @@ package com.headwire.sling.multipackageupdate;
  * #L%
  */
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.io.Serializable;
 
 public final class PackagesListEndpoint implements Serializable {
@@ -37,11 +39,20 @@ public final class PackagesListEndpoint implements Serializable {
         this.packagesFileName = packagesFileName;
     }
 
+    private static boolean isUrlValid(final String url) {
+        final String lowercaseUrl = StringUtils.lowerCase(url);
+        return StringUtils.startsWithAny(lowercaseUrl, "http://", "https://");
+    }
+
     public String getServerUrl() {
         return serverUrl;
     }
 
     public String getFileUrl(final String name) {
+        if (isUrlValid(name)) {
+            return name;
+        }
+
         return getServerUrl() + "/" + name;
     }
 

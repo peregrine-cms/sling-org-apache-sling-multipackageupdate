@@ -1,2 +1,2 @@
 test-app-1.0.0.zip
-test-content-1.0.0.zip
+http://localhost:8080/content/multipackageupdate/test-content-1.0.0.zip
