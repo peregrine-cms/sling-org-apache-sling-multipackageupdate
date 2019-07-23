@@ -112,4 +112,5 @@ public final class MultiPackageUpdatePerformerTest {
         model.run();
         verify(pack, never()).install(any(ImportOptions.class));
     }
+
 }

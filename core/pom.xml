@@ -59,7 +59,7 @@
 				<configuration>
 					<instructions>
 						<Bundle-SymbolicName>${project.groupId}.${project.parent.artifactId}</Bundle-SymbolicName>
-						<Embed-Dependency>*;scope=compile;inline=true</Embed-Dependency>
+						<Embed-Dependency>*;scope=compile</Embed-Dependency>
 						<Embed-Transitive>true</Embed-Transitive>
 						<_dsannotations>*</_dsannotations>
 						<_metatypeannotations>*</_metatypeannotations>
