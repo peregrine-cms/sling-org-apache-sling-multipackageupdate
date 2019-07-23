@@ -71,7 +71,7 @@ public final class MultiPackageUpdateServlet extends SlingAllMethodsServlet {
     @Reference
     private transient MultiPackageUpdate updater;
 
-    private MultiPackageUpdateServletConfig config;
+    private transient MultiPackageUpdateServletConfig config;
 
     private PackagesListEndpoint endpoint;
 
