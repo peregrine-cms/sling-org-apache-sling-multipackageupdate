@@ -21,24 +21,22 @@
 
 #### Introduction
 
-This project delivers a simple servlet `MultiPackageUpdateServlet` that can perform an installation of a given list
-of packages.
+This project delivers a simple servlet mechanism to perform an installation of a given list of packages.
 
 #### Usage
 
-The servlet is exposed at [/bin/mpu/update.json](http://localhost:8080/bin/mpu/update.json)
-and needs a parameter named `cmd`, which can be one of the following:
-- [`start`](http://localhost:8080/bin/mpu/update.json?cmd=start): to trigger the multi-package update process,
-- [`stop`](http://localhost:8080/bin/mpu/update.json?cmd=stop): to stop the current update thread
+The servlets are exposed under [/bin/mpu](http://localhost:8080/bin/browser.html/bin/mpu) and are the following:
+- [`/bin/mpu/start`](http://localhost:8080/bin/mpu/start.json): to trigger the multi-package update process,
+- [`/bin/mpu/stop`](http://localhost:8080/bin/mpu/stop.json): to stop the current update thread
 (if there is one running),
-- [`currentStatus`](http://localhost:8080/bin/mpu/update.json?cmd=currentStatus):
+- [`/bin/mpu/status`](http://localhost:8080/bin/mpu/status.json):
 to see the current status (if there is a thread running),
-- [`lastLog`](http://localhost:8080/bin/mpu/update.json?cmd=lastLog): to check the last log message.
+- [`/bin/mpu/log`](http://localhost:8080/bin/mpu/log.json): to check the last log message.
 
 #### Configuration
 
 The main required configuration is that of
-[com.headwire.sling.multipackageupdate.impl.MultiPackageUpdateServlet](http://localhost:8080/system/console/configMgr/com.headwire.sling.multipackageupdate.impl.MultiPackageUpdateServlet):
+[com.headwire.sling.multipackageupdate.impl.MultiPackageUpdateStartServlet](http://localhost:8080/system/console/configMgr/com.headwire.sling.multipackageupdate.impl.MultiPackageUpdateStartServlet):
 - **Server with Packages**: the full `URL` of the location of both packages and the listing file from below.
 An example value could be `http://localhost:8080/content`,
 - **Packages List File Name**: the name of a text file, located under the above path, containing
@@ -71,18 +69,15 @@ To install the OSGi bundle use the project **autoInstallBundle**:
 
     mvn clean install -P autoInstallBundle
 
-To install the Content together with the core bundle
-use the project **autoInstallPackage**:
+To install the Content together with the core bundle use the project **autoInstallPackage**:
 
     mvn clean install -P autoInstallPackage
 
 ##### ATTENTION
 
-It is probably best not to deploy the OSGi Bundle alone as this
-may lead to conflicts with the package deployment.
+It is probably best not to deploy the OSGi Bundle alone as this may lead to conflicts with the package deployment.
 
-In case of a misshape the package and bundles needs to be uninstalled
-manually:
+In case of a misshape the package and bundles needs to be uninstalled manually:
 
 1. Remove [`/apps/multipackageupdate/install`](http://localhost:8080/bin/browser.html/apps/multipackageupdate/install) folder,
 2. Uninstall the package using [the package manager](http://localhost:8080/bin/packages.html),

@@ -23,13 +23,13 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
-public class MultiPackageUpdateJobConsumerTest {
+public final class MultiPackageUpdateJobConsumerTest {
 
     private final MultiPackageUpdateJobConsumer model = new MultiPackageUpdateJobConsumer();
 
     private final PackagesListEndpoint endpoint = new PackagesListEndpoint(SERVER_URL, PACKAGES_TXT);
 
-    private final String subServiceName = MultiPackageUpdateServlet.SUB_SERVICE_NAME;
+    private final String subServiceName = "my-sub-service";
 
     @Mock
     private SlingRepository repository;

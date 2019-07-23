@@ -24,7 +24,7 @@ public final class MultiPackageUpdateServiceTest {
 
     private final MultiPackageUpdateService model = new MultiPackageUpdateService();
     private final PackagesListEndpoint endpoint = new PackagesListEndpoint(SERVER_URL, PACKAGES_TXT);
-    private final String subServiceName = MultiPackageUpdateServlet.SUB_SERVICE_NAME;
+    private final String subServiceName = "my-sub-service";
 
     @Mock
     private JobManager jobManager;
