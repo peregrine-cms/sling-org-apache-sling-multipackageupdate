@@ -21,8 +21,8 @@ public class PackagesListEndpointTest {
     @Test
     public void getFileUrl() {
         Assert.assertEquals(SERVER_URL + "/" + SAMPLE_PACKAGE, model.getFileUrl(SAMPLE_PACKAGE));
-        Assert.assertEquals(HTTP_SAMPLE_PACKAGE, HTTP_SAMPLE_PACKAGE);
-        Assert.assertEquals(HTTPS_SAMPLE_PACKAGE, HTTPS_SAMPLE_PACKAGE);
+        Assert.assertEquals(HTTP_SAMPLE_PACKAGE, model.getFileUrl(HTTP_SAMPLE_PACKAGE));
+        Assert.assertEquals(HTTPS_SAMPLE_PACKAGE, model.getFileUrl(HTTPS_SAMPLE_PACKAGE));
     }
 
     @Test
