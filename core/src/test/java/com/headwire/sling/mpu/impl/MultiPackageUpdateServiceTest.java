@@ -1,6 +1,5 @@
 package com.headwire.sling.mpu.impl;
 
-import com.headwire.sling.mpu.MultiPackageUpdateResponse;
 import com.headwire.sling.mpu.PackagesListEndpoint;
 import com.headwire.sling.mpu.ProcessPerformer;
 import junitx.util.PrivateAccessor;
@@ -46,7 +45,7 @@ public final class MultiPackageUpdateServiceTest {
 
     @Test
     public void start() {
-        MultiPackageUpdateResponse response = model.start(endpoint, subServiceName, 1);
+        MultiPackageUpdateResponseImpl response = model.start(endpoint, subServiceName, 1);
         assertNull(response.getLog());
 
         response = model.start(endpoint, subServiceName, 1);
@@ -59,7 +58,7 @@ public final class MultiPackageUpdateServiceTest {
 
     @Test
     public void stop() {
-        MultiPackageUpdateResponse response = model.stop();
+        MultiPackageUpdateResponseImpl response = model.stop();
         assertNull(response.getLog());
 
         model.start(endpoint, subServiceName, 1);

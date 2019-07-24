@@ -52,58 +52,58 @@ public final class MultiPackageUpdateService implements MultiPackageUpdate, Proc
     private String lastLogText;
 
     @Override
-    public MultiPackageUpdateResponse start(final PackagesListEndpoint endpoint, final String subServiceName, final int retryCounter) {
+    public MultiPackageUpdateResponseImpl start(final PackagesListEndpoint endpoint, final String subServiceName, final int retryCounter) {
         synchronized(lock) {
             if (currentJob == null) {
                 return addJob(endpoint, subServiceName, retryCounter);
             }
 
             if (currentPerformer == null) {
-                return new MultiPackageUpdateResponse("Update job already scheduled");
+                return new MultiPackageUpdateResponseImpl("Update job already scheduled");
             }
 
-            final MultiPackageUpdateResponse response = new MultiPackageUpdateResponse("Update job already in progress");
+            final MultiPackageUpdateResponseImpl response = new MultiPackageUpdateResponseImpl("Update job already in progress");
             response.setLog(currentPerformer.getLogText());
             return response;
         }
     }
 
-    private MultiPackageUpdateResponse addJob(final PackagesListEndpoint endpoint, final String subServiceName, final int maxRetriesCount) {
+    private MultiPackageUpdateResponseImpl addJob(final PackagesListEndpoint endpoint, final String subServiceName, final int maxRetriesCount) {
         final Map<String, Object> params = new HashMap<>();
         params.put(MultiPackageUpdateJobConsumer.ENDPOINT, endpoint);
         params.put(MultiPackageUpdateJobConsumer.SUB_SERVICE_NAME, subServiceName);
         params.put(MultiPackageUpdateJobConsumer.MAX_RETRIES_COUNT, maxRetriesCount);
         currentJob = jobManager.addJob(MultiPackageUpdateJobConsumer.TOPIC, params);
-        return new MultiPackageUpdateResponse("Update job added just now");
+        return new MultiPackageUpdateResponseImpl("Update job added just now");
     }
 
     @Override
-    public MultiPackageUpdateResponse stop() {
+    public MultiPackageUpdateResponseImpl stop() {
         synchronized (lock) {
             if (currentJob == null) {
-                return new MultiPackageUpdateResponse("No update job scheduled");
+                return new MultiPackageUpdateResponseImpl("No update job scheduled");
             }
 
             if (currentPerformer == null) {
                 jobManager.stopJobById(currentJob.getId());
                 currentJob = null;
-                return new MultiPackageUpdateResponse("Update job stopped");
+                return new MultiPackageUpdateResponseImpl("Update job stopped");
             }
 
             currentPerformer.terminate();
-            final MultiPackageUpdateResponse response = new MultiPackageUpdateResponse("Update job (in progress) marked for earlier termination");
+            final MultiPackageUpdateResponseImpl response = new MultiPackageUpdateResponseImpl("Update job (in progress) marked for earlier termination");
             response.setLog(currentPerformer.getLogText());
             return response;
         }
     }
 
     @Override
-    public MultiPackageUpdateResponse getCurrentStatus() {
+    public MultiPackageUpdateResponseImpl getCurrentStatus() {
         synchronized (lock) {
             if (currentPerformer == null) {
-                return new MultiPackageUpdateResponse(NO_UPDATE_NO_UPDATE_JOB_RUNNING_CURRENTLY);
+                return new MultiPackageUpdateResponseImpl(NO_UPDATE_NO_UPDATE_JOB_RUNNING_CURRENTLY);
             } else {
-                final MultiPackageUpdateResponse response = new MultiPackageUpdateResponse("Update process in progress");
+                final MultiPackageUpdateResponseImpl response = new MultiPackageUpdateResponseImpl("Update process in progress");
                 response.setLog(currentPerformer.getLogText());
                 return response;
             }
@@ -111,9 +111,9 @@ public final class MultiPackageUpdateService implements MultiPackageUpdate, Proc
     }
 
     @Override
-    public MultiPackageUpdateResponse getLastLogText() {
+    public MultiPackageUpdateResponseImpl getLastLogText() {
         final String status = StringUtils.isBlank(lastLogText) ? "No previous log available" :  "Last log";
-        final MultiPackageUpdateResponse response = new MultiPackageUpdateResponse(status);
+        final MultiPackageUpdateResponseImpl response = new MultiPackageUpdateResponseImpl(status);
         response.setLog(lastLogText);
         return response;
     }

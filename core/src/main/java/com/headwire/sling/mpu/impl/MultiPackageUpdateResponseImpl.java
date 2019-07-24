@@ -1,4 +1,4 @@
-package com.headwire.sling.mpu;
+package com.headwire.sling.mpu.impl;
 
 /*-
  * #%L
@@ -25,9 +25,26 @@ package com.headwire.sling.mpu;
  * #L%
  */
 
-public interface MultiPackageUpdateResponse {
+import com.headwire.sling.mpu.MultiPackageUpdateResponse;
 
-    String getStatus();
+public final class MultiPackageUpdateResponseImpl implements MultiPackageUpdateResponse {
 
-    String getLog();
+    private String status;
+    private String log;
+
+    public MultiPackageUpdateResponseImpl(final String status) {
+        this.status = status;
+    }
+
+    public void setLog(final String log) {
+        this.log = log;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public String getLog() {
+        return log;
+    }
 }

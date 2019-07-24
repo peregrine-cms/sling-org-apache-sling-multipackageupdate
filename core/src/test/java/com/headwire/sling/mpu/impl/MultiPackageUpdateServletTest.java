@@ -1,7 +1,6 @@
 package com.headwire.sling.mpu.impl;
 
 import com.headwire.sling.mpu.MPUUtil;
-import com.headwire.sling.mpu.MultiPackageUpdateResponse;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.SlingHttpServletResponse;
 import org.apache.sling.api.request.RequestPathInfo;
@@ -24,8 +23,8 @@ public final class MultiPackageUpdateServletTest {
     private final MultiPackageUpdateServlet model = new MultiPackageUpdateServlet() {
 
         @Override
-        protected MultiPackageUpdateResponse execute() {
-            return new MultiPackageUpdateResponse(null);
+        protected MultiPackageUpdateResponseImpl execute() {
+            return new MultiPackageUpdateResponseImpl(null);
         }
 
     };
