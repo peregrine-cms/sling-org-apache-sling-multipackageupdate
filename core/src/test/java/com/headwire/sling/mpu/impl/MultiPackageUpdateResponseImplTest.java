@@ -8,10 +8,11 @@ public final class MultiPackageUpdateResponseImplTest {
     private static final String STATUS = "example status";
     private static final String LOG = "example log";
 
-    private final MultiPackageUpdateResponseImpl model = new MultiPackageUpdateResponseImpl(STATUS);
+    private final MultiPackageUpdateResponseImpl model = new MultiPackageUpdateResponseImpl();
 
     @Test
     public void getStatus() {
+        model.setStatus(STATUS);
         Assert.assertEquals(STATUS, model.getStatus());
     }
 

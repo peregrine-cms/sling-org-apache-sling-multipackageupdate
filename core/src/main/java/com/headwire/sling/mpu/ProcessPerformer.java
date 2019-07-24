@@ -6,6 +6,8 @@ public interface ProcessPerformer {
 
     void terminate();
 
+    boolean isTerminated();
+
     String getLogText();
 
 }

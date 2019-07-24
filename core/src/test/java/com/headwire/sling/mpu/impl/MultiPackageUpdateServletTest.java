@@ -24,7 +24,7 @@ public final class MultiPackageUpdateServletTest {
 
         @Override
         protected MultiPackageUpdateResponseImpl execute() {
-            return new MultiPackageUpdateResponseImpl(null);
+            return new MultiPackageUpdateResponseImpl();
         }
 
     };

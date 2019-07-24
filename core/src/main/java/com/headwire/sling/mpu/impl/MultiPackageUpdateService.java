@@ -31,6 +31,7 @@ import org.apache.sling.event.jobs.Job;
 import org.apache.sling.event.jobs.JobManager;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
+import com.headwire.sling.mpu.MultiPackageUpdateResponse.Code;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -38,7 +39,15 @@ import java.util.Map;
 @Component(service = { MultiPackageUpdate.class, ProcessPerformerListener.class })
 public final class MultiPackageUpdateService implements MultiPackageUpdate, ProcessPerformerListener {
 
-    private static final String NO_UPDATE_NO_UPDATE_JOB_RUNNING_CURRENTLY = "No update job running currently";
+    private static final String JOB_SCHEDULED = "Update job scheduled just now";
+    private static final String JOB_SCHEDULED_BEFORE = "Update job already scheduled before";
+    private static final String JOB_IN_PROGRESS = "Update job already in progress";
+    private static final String NO_UPDATE_JOB_SCHEDULED = "No update job scheduled currently";
+    private static final String UPDATE_JOB_STOPPED = "Update job stopped before running";
+    private static final String MARKED_FOR_EARLIER_TERMINATION = "Update job (currently in progress) marked for earlier termination";
+    private static final String NO_UPDATE_JOB_RUNNING = "No update job running currently";
+    private static final String LOG_UNAVAILABLE = "No previous log available";
+    private static final String LAST_LOG = "Last log";
 
     private final Object lock = new Object();
 
@@ -55,45 +64,54 @@ public final class MultiPackageUpdateService implements MultiPackageUpdate, Proc
     public MultiPackageUpdateResponseImpl start(final PackagesListEndpoint endpoint, final String subServiceName, final int retryCounter) {
         synchronized(lock) {
             if (currentJob == null) {
-                return addJob(endpoint, subServiceName, retryCounter);
+                currentJob = createJob(endpoint, subServiceName, retryCounter);
+                return createResponse(Code.SCHEDULED, JOB_SCHEDULED);
             }
 
             if (currentPerformer == null) {
-                return new MultiPackageUpdateResponseImpl("Update job already scheduled");
+                return createResponse(Code.WAITING, JOB_SCHEDULED_BEFORE);
             }
 
-            final MultiPackageUpdateResponseImpl response = new MultiPackageUpdateResponseImpl("Update job already in progress");
-            response.setLog(currentPerformer.getLogText());
-            return response;
+            return createResponseWithCurrentLogText(Code.IN_PROGRESS, JOB_IN_PROGRESS);
         }
     }
 
-    private MultiPackageUpdateResponseImpl addJob(final PackagesListEndpoint endpoint, final String subServiceName, final int maxRetriesCount) {
+    private Job createJob(final PackagesListEndpoint endpoint, final String subServiceName, final int maxRetriesCount) {
         final Map<String, Object> params = new HashMap<>();
         params.put(MultiPackageUpdateJobConsumer.ENDPOINT, endpoint);
         params.put(MultiPackageUpdateJobConsumer.SUB_SERVICE_NAME, subServiceName);
         params.put(MultiPackageUpdateJobConsumer.MAX_RETRIES_COUNT, maxRetriesCount);
-        currentJob = jobManager.addJob(MultiPackageUpdateJobConsumer.TOPIC, params);
-        return new MultiPackageUpdateResponseImpl("Update job added just now");
+        return jobManager.addJob(MultiPackageUpdateJobConsumer.TOPIC, params);
+    }
+
+    private MultiPackageUpdateResponseImpl createResponse(final Code code, final String status) {
+        final MultiPackageUpdateResponseImpl response = new MultiPackageUpdateResponseImpl();
+        response.setCode(code);
+        response.setStatus(status);
+        return response;
+    }
+
+    private MultiPackageUpdateResponseImpl createResponseWithCurrentLogText(final Code code, final String status) {
+        final MultiPackageUpdateResponseImpl response = createResponse(code, status);
+        response.setLog(currentPerformer.getLogText());
+        return response;
     }
 
     @Override
     public MultiPackageUpdateResponseImpl stop() {
         synchronized (lock) {
             if (currentJob == null) {
-                return new MultiPackageUpdateResponseImpl("No update job scheduled");
+                return createResponse(Code.UNAVAILABLE, NO_UPDATE_JOB_SCHEDULED);
             }
 
             if (currentPerformer == null) {
                 jobManager.stopJobById(currentJob.getId());
                 currentJob = null;
-                return new MultiPackageUpdateResponseImpl("Update job stopped");
+                return createResponse(Code.TERMINATED, UPDATE_JOB_STOPPED);
             }
 
             currentPerformer.terminate();
-            final MultiPackageUpdateResponseImpl response = new MultiPackageUpdateResponseImpl("Update job (in progress) marked for earlier termination");
-            response.setLog(currentPerformer.getLogText());
-            return response;
+            return createResponseWithCurrentLogText(Code.AWAITING_TERMINATION, MARKED_FOR_EARLIER_TERMINATION);
         }
     }
 
@@ -101,19 +119,28 @@ public final class MultiPackageUpdateService implements MultiPackageUpdate, Proc
     public MultiPackageUpdateResponseImpl getCurrentStatus() {
         synchronized (lock) {
             if (currentPerformer == null) {
-                return new MultiPackageUpdateResponseImpl(NO_UPDATE_NO_UPDATE_JOB_RUNNING_CURRENTLY);
-            } else {
-                final MultiPackageUpdateResponseImpl response = new MultiPackageUpdateResponseImpl("Update process in progress");
-                response.setLog(currentPerformer.getLogText());
-                return response;
+                return createResponse(Code.UNAVAILABLE, NO_UPDATE_JOB_RUNNING);
             }
+
+            if (currentPerformer.isTerminated()) {
+                return createResponseWithCurrentLogText(Code.AWAITING_TERMINATION, MARKED_FOR_EARLIER_TERMINATION);
+            }
+
+            return createResponseWithCurrentLogText(Code.IN_PROGRESS, JOB_IN_PROGRESS);
         }
     }
 
     @Override
     public MultiPackageUpdateResponseImpl getLastLogText() {
-        final String status = StringUtils.isBlank(lastLogText) ? "No previous log available" :  "Last log";
-        final MultiPackageUpdateResponseImpl response = new MultiPackageUpdateResponseImpl(status);
+        if (StringUtils.isBlank(lastLogText)) {
+            return createResponseWithLastLogText(Code.UNAVAILABLE, LOG_UNAVAILABLE);
+        }
+
+        return createResponseWithLastLogText(Code.AVAILABLE, LAST_LOG);
+    }
+
+    private MultiPackageUpdateResponseImpl createResponseWithLastLogText(final Code code, final String status) {
+        final MultiPackageUpdateResponseImpl response = createResponse(code, status);
         response.setLog(lastLogText);
         return response;
     }

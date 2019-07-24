@@ -29,22 +29,35 @@ import com.headwire.sling.mpu.MultiPackageUpdateResponse;
 
 public final class MultiPackageUpdateResponseImpl implements MultiPackageUpdateResponse {
 
+    private Code code;
     private String status;
     private String log;
 
-    public MultiPackageUpdateResponseImpl(final String status) {
+    @Override
+    public Code getCode() {
+        return null;
+    }
+
+    public void setCode(Code code) {
+        this.code = code;
+    }
+
+    public void setStatus(String status) {
         this.status = status;
+    }
+
+    @Override
+    public String getStatus() {
+        return status;
+    }
+
+    @Override
+    public String getLog() {
+        return log;
     }
 
     public void setLog(final String log) {
         this.log = log;
     }
 
-    public String getStatus() {
-        return status;
-    }
-
-    public String getLog() {
-        return log;
-    }
 }

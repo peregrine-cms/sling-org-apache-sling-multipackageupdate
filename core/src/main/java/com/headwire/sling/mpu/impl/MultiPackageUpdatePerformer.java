@@ -202,4 +202,9 @@ public final class MultiPackageUpdatePerformer implements ProgressTrackerListene
 	public void terminate() {
 		terminate = true;
 	}
+
+	@Override
+	public boolean isTerminated() {
+		return terminate;
+	}
 }

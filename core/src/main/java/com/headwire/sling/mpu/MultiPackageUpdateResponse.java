@@ -27,6 +27,18 @@ package com.headwire.sling.mpu;
 
 public interface MultiPackageUpdateResponse {
 
+    enum Code {
+        SCHEDULED,
+        WAITING,
+        IN_PROGRESS,
+        AWAITING_TERMINATION,
+        TERMINATED,
+        AVAILABLE,
+        UNAVAILABLE
+    }
+
+    Code getCode();
+
     String getStatus();
 
     String getLog();
