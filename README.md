@@ -17,7 +17,7 @@ to see the current status (if there is a thread running),
 #### Configuration
 
 The main required configuration is that of
-[com.headwire.sling.multipackageupdate.impl.MultiPackageUpdateStartServlet](http://localhost:8080/system/console/configMgr/com.headwire.sling.multipackageupdate.impl.MultiPackageUpdateStartServlet):
+[com.headwire.sling.mpu.impl.MultiPackageUpdateStartServlet](http://localhost:8080/system/console/configMgr/com.headwire.sling.mpu.impl.MultiPackageUpdateStartServlet):
 - **Server with Packages**: the full `URL` of the location of both packages and the listing file from below.
 An example value could be `http://localhost:8080/content`,
 - **Packages List File Name**: the name of a text file, located under the above path, containing
