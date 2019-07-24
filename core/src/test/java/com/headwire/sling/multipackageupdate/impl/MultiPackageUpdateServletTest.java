@@ -1,8 +1,10 @@
 package com.headwire.sling.multipackageupdate.impl;
 
+import com.headwire.sling.multipackageupdate.MPUUtil;
 import com.headwire.sling.multipackageupdate.MultiPackageUpdateResponse;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.SlingHttpServletResponse;
+import org.apache.sling.api.request.RequestPathInfo;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -33,12 +35,19 @@ public final class MultiPackageUpdateServletTest {
     private SlingHttpServletResponse response;
 
     @Mock
+    private RequestPathInfo pathInfo;
+
+    @Mock
     private PrintWriter writer;
 
     @Before
     public void setUp() throws IOException {
         when(response.getWriter())
                 .thenReturn(writer);
+        when(request.getRequestPathInfo())
+                .thenReturn(pathInfo);
+        when(pathInfo.getExtension())
+                .thenReturn(MPUUtil.JSON);
     }
 
     @Test

@@ -27,11 +27,15 @@ package com.headwire.sling.multipackageupdate.impl;
 
 import com.google.gson.Gson;
 import com.headwire.sling.multipackageupdate.MultiPackageUpdateResponse;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.SlingHttpServletResponse;
+import org.apache.sling.api.request.RequestPathInfo;
 import org.apache.sling.api.servlets.SlingAllMethodsServlet;
 
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.Enumeration;
 
 import static com.headwire.sling.multipackageupdate.MPUConstants.PROJECT_NAME;
 import static com.headwire.sling.multipackageupdate.MPUUtil.*;
@@ -52,15 +56,50 @@ public abstract class MultiPackageUpdateServlet extends SlingAllMethodsServlet {
     protected void doGet(final SlingHttpServletRequest request, final SlingHttpServletResponse response)
             throws IOException {
         final MultiPackageUpdateResponse result = execute();
-        response.setContentType("application/json");
-        response.setCharacterEncoding("utf-8");
-        response.getWriter().write(gson.toJson(result));
+        final String string;
+        if (acceptsHtml(request)) {
+            response.setContentType(TEXT_HTML);
+            string = "<html><head><title>" + result.getStatus() + "</title></head><body><pre>" + result.getLog() + "</pre></body></html>";
+        } else {
+            response.setContentType(APPLICATION_JSON);
+            string = gson.toJson(result);
+        }
+
+        response.setCharacterEncoding(UTF_8);
+        final PrintWriter writer = response.getWriter();
+        writer.write(string);
     }
 
     @Override
     protected void doPost(final SlingHttpServletRequest request, final SlingHttpServletResponse response)
             throws IOException {
         doGet(request, response);
+    }
+
+    private boolean acceptsHtml(final SlingHttpServletRequest request) {
+        final RequestPathInfo pathInfo = request.getRequestPathInfo();
+        final String extension = pathInfo.getExtension();
+        if (StringUtils.equalsIgnoreCase(extension, HTML)) {
+            return true;
+        }
+
+        if (StringUtils.equalsIgnoreCase(extension, JSON)) {
+            return false;
+        }
+
+        if (StringUtils.equalsIgnoreCase(request.getHeader(ACCEPT), TEXT_HTML)) {
+            return true;
+        }
+
+        final Enumeration acceptHeaders = request.getHeaders(ACCEPT);
+        while (acceptHeaders.hasMoreElements()) {
+            final String element = String.valueOf(acceptHeaders.nextElement());
+            if (StringUtils.equalsIgnoreCase(element, TEXT_HTML)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     protected abstract MultiPackageUpdateResponse execute();
