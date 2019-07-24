@@ -35,7 +35,7 @@ public final class MultiPackageUpdateResponseImpl implements MultiPackageUpdateR
 
     @Override
     public Code getCode() {
-        return null;
+        return code;
     }
 
     public void setCode(Code code) {
