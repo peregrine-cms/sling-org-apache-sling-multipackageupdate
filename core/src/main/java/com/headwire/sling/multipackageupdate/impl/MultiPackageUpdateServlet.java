@@ -91,7 +91,7 @@ public abstract class MultiPackageUpdateServlet extends SlingAllMethodsServlet {
             return true;
         }
 
-        final Enumeration acceptHeaders = request.getHeaders(ACCEPT);
+        final Enumeration<?> acceptHeaders = request.getHeaders(ACCEPT);
         while (acceptHeaders.hasMoreElements()) {
             final String element = String.valueOf(acceptHeaders.nextElement());
             if (StringUtils.equalsIgnoreCase(element, TEXT_HTML)) {
