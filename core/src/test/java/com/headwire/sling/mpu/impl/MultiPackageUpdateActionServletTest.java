@@ -1,6 +1,5 @@
 package com.headwire.sling.mpu.impl;
 
-import com.headwire.sling.mpu.HttpStatusCodeMapper;
 import com.headwire.sling.mpu.MultiPackageUpdate;
 import com.headwire.sling.mpu.MultiPackageUpdateResponse.Code;
 import junitx.util.PrivateAccessor;
