@@ -29,6 +29,8 @@ public interface MultiPackageUpdate {
 
     MultiPackageUpdateResponse start(PackagesListEndpoint endpoint, String subServiceName, int maxRetriesCount);
 
+    MultiPackageUpdateResponse start();
+
     MultiPackageUpdateResponse stop();
 
     MultiPackageUpdateResponse getCurrentStatus();

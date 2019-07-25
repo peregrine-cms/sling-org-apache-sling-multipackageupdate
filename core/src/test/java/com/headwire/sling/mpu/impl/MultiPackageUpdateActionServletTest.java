@@ -24,10 +24,6 @@ public abstract class MultiPackageUpdateActionServletTest<ServletType extends Mu
     @Before
     public final void setUp() throws NoSuchFieldException {
         PrivateAccessor.setField(model, "updater", updater);
-        setUpImpl(model);
-    }
-
-    protected void setUpImpl(final ServletType model) {
     }
 
     @Test

@@ -29,7 +29,7 @@ import org.osgi.service.metatype.annotations.AttributeDefinition;
 import org.osgi.service.metatype.annotations.ObjectClassDefinition;
 
 @ObjectClassDefinition(name = "%config.name", description = "%config.description")
-public @interface MultiPackageUpdateServletConfig {
+public @interface MultiPackageUpdateServiceConfig {
 
 	@AttributeDefinition(name = "%serverUrl.name", description = "%serverUrl.description")
 	String serverUrl();

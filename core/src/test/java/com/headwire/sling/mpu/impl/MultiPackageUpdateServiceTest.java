@@ -34,9 +34,14 @@ public final class MultiPackageUpdateServiceTest {
     @Mock
     private ProcessPerformer performer;
 
+    @Mock
+    private MultiPackageUpdateServiceConfig config;
+
     @Before
     public void setUp() throws NoSuchFieldException {
         PrivateAccessor.setField(model, "jobManager", jobManager);
+        model.activate(config);
+
         when(jobManager.addJob(anyString(), any(Map.class)))
                 .thenReturn(job);
         when(performer.getLogText())

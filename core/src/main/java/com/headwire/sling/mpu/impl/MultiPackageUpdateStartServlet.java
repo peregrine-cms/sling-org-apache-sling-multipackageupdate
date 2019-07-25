@@ -27,16 +27,11 @@ package com.headwire.sling.mpu.impl;
 
 import com.headwire.sling.mpu.MultiPackageUpdate;
 import com.headwire.sling.mpu.MultiPackageUpdateResponse;
-import com.headwire.sling.mpu.PackagesListEndpoint;
-import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
-import org.osgi.service.metatype.annotations.Designate;
 
 import javax.servlet.Servlet;
 import javax.servlet.http.HttpServletResponse;
-
-import static com.headwire.sling.mpu.MPUConstants.PROJECT_NAME;
 
 @Component(service = Servlet.class,
         property = {
@@ -45,22 +40,9 @@ import static com.headwire.sling.mpu.MPUConstants.PROJECT_NAME;
                 MultiPackageUpdateServlet.RESOURCE_TYPES_PROPERTY_PREFIX + "start",
                 MultiPackageUpdateServlet.SERVLET_EXTENSIONS_PROPERTY
         })
-@Designate(ocd = MultiPackageUpdateServletConfig.class)
 public final class MultiPackageUpdateStartServlet extends MultiPackageUpdateServlet {
 
     private static final long serialVersionUID = -7049154615161321011L;
-
-    private static final String SUB_SERVICE_NAME = PROJECT_NAME;
-
-    private transient MultiPackageUpdateServletConfig config;
-
-    private PackagesListEndpoint endpoint;
-
-    @Activate
-    public void activate(final MultiPackageUpdateServletConfig config) {
-        this.config = config;
-        endpoint = new PackagesListEndpoint(config.serverUrl(), config.filename());
-    }
 
 
     @Reference
@@ -68,7 +50,7 @@ public final class MultiPackageUpdateStartServlet extends MultiPackageUpdateServ
 
     @Override
     protected MultiPackageUpdateResponse execute() {
-        return updater.start(endpoint, SUB_SERVICE_NAME, config.maxRetriesCount());
+        return updater.start();
     }
 
     @Override

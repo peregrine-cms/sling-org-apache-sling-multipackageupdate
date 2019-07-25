@@ -29,14 +29,19 @@ import com.headwire.sling.mpu.*;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.sling.event.jobs.Job;
 import org.apache.sling.event.jobs.JobManager;
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import com.headwire.sling.mpu.MultiPackageUpdateResponse.Code;
+import org.osgi.service.metatype.annotations.Designate;
 
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.headwire.sling.mpu.MPUConstants.PROJECT_NAME;
+
 @Component(service = { MultiPackageUpdate.class, ProcessPerformerListener.class })
+@Designate(ocd = MultiPackageUpdateServiceConfig.class)
 public final class MultiPackageUpdateService implements MultiPackageUpdate, ProcessPerformerListener {
 
     private static final String JOB_SCHEDULED = "Update job scheduled just now";
@@ -49,16 +54,28 @@ public final class MultiPackageUpdateService implements MultiPackageUpdate, Proc
     private static final String LOG_UNAVAILABLE = "No previous log available";
     private static final String LAST_LOG = "Last log";
 
+    private static final String SUB_SERVICE_NAME = PROJECT_NAME;
+
     private final Object lock = new Object();
 
     @Reference
     private JobManager jobManager;
+
+    private MultiPackageUpdateServiceConfig config;
+
+    private PackagesListEndpoint endpoint;
 
     private Job currentJob;
 
     private ProcessPerformer currentPerformer;
 
     private String lastLogText;
+
+    @Activate
+    public void activate(final MultiPackageUpdateServiceConfig config) {
+        this.config = config;
+        endpoint = new PackagesListEndpoint(config.serverUrl(), config.filename());
+    }
 
     @Override
     public MultiPackageUpdateResponseImpl start(final PackagesListEndpoint endpoint, final String subServiceName, final int retryCounter) {
@@ -74,6 +91,11 @@ public final class MultiPackageUpdateService implements MultiPackageUpdate, Proc
 
             return createResponseWithCurrentLogText(Code.IN_PROGRESS, JOB_IN_PROGRESS);
         }
+    }
+
+    @Override
+    public MultiPackageUpdateResponseImpl start() {
+        return start(endpoint, SUB_SERVICE_NAME, config.maxRetriesCount());
     }
 
     private Job createJob(final PackagesListEndpoint endpoint, final String subServiceName, final int maxRetriesCount) {
