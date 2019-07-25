@@ -25,13 +25,13 @@ package com.headwire.sling.mpu.impl;
  * #L%
  */
 
+import com.headwire.sling.mpu.HttpStatusCodeMapper;
 import com.headwire.sling.mpu.MultiPackageUpdate;
 import com.headwire.sling.mpu.MultiPackageUpdateResponse;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import javax.servlet.Servlet;
-import javax.servlet.http.HttpServletResponse;
 
 @Component(service = Servlet.class,
         property = {
@@ -44,9 +44,11 @@ public final class MultiPackageUpdateStartServlet extends MultiPackageUpdateServ
 
     private static final long serialVersionUID = -7049154615161321011L;
 
-
     @Reference
     private transient MultiPackageUpdate updater;
+
+    @Reference
+    private transient HttpStatusCodeMapper httpMapper;
 
     @Override
     protected MultiPackageUpdateResponse execute() {
@@ -55,9 +57,6 @@ public final class MultiPackageUpdateStartServlet extends MultiPackageUpdateServ
 
     @Override
     protected int getStatusCode(final MultiPackageUpdateResponse.Code code) {
-        switch (code) {
-            case SCHEDULED: return HttpServletResponse.SC_CREATED;
-            default: return HttpServletResponse.SC_OK;
-        }
+        return httpMapper.getStatusCode(MultiPackageUpdate.Operation.START, code);
     }
 }

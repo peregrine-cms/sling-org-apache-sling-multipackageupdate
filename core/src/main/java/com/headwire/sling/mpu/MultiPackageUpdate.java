@@ -37,4 +37,11 @@ public interface MultiPackageUpdate {
 
     MultiPackageUpdateResponse getLastLogText();
 
+    enum Operation {
+        START,
+        STOP,
+        CURRENT_STATUS,
+        LAST_LOG_TEXT
+    }
+
 }

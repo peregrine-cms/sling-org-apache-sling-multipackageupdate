@@ -1,5 +1,6 @@
 package com.headwire.sling.mpu.impl;
 
+import com.headwire.sling.mpu.HttpStatusCodeMapper;
 import com.headwire.sling.mpu.MultiPackageUpdate;
 import com.headwire.sling.mpu.MultiPackageUpdateResponse.Code;
 import junitx.util.PrivateAccessor;
@@ -24,6 +25,7 @@ public abstract class MultiPackageUpdateActionServletTest<ServletType extends Mu
     @Before
     public final void setUp() throws NoSuchFieldException {
         PrivateAccessor.setField(model, "updater", updater);
+        PrivateAccessor.setField(model, "httpMapper", new HttpStatusCodeMapperService());
     }
 
     @Test

@@ -25,6 +25,7 @@ package com.headwire.sling.mpu.impl;
  * #L%
  */
 
+import com.headwire.sling.mpu.HttpStatusCodeMapper;
 import com.headwire.sling.mpu.MultiPackageUpdate;
 import com.headwire.sling.mpu.MultiPackageUpdateResponse;
 import org.osgi.service.component.annotations.Component;
@@ -48,6 +49,9 @@ public final class MultiPackageUpdateStatusServlet extends MultiPackageUpdateSer
     @Reference
     private transient MultiPackageUpdate updater;
 
+    @Reference
+    private transient HttpStatusCodeMapper httpMapper;
+
     @Override
     protected MultiPackageUpdateResponse execute() {
         return updater.getCurrentStatus();
@@ -55,9 +59,6 @@ public final class MultiPackageUpdateStatusServlet extends MultiPackageUpdateSer
 
     @Override
     protected int getStatusCode(final MultiPackageUpdateResponse.Code code) {
-        switch (code) {
-            case UNAVAILABLE: return HttpServletResponse.SC_NO_CONTENT;
-            default: return HttpServletResponse.SC_OK;
-        }
+        return httpMapper.getStatusCode(MultiPackageUpdate.Operation.CURRENT_STATUS, code);
     }
 }
