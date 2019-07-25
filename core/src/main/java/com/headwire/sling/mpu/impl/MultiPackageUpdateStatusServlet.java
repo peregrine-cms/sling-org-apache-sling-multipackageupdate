@@ -37,6 +37,7 @@ import javax.servlet.http.HttpServletResponse;
         property = {
                 MultiPackageUpdateServlet.SERVLET_METHODS_PROPERTY_GET,
                 MultiPackageUpdateServlet.RESOURCE_TYPES_PROPERTY_PREFIX + "status",
+                MultiPackageUpdateServlet.RESOURCE_TYPES_PROPERTY_PREFIX + "main",
                 MultiPackageUpdateServlet.SERVLET_EXTENSIONS_PROPERTY
         })
 public final class MultiPackageUpdateStatusServlet extends MultiPackageUpdateServlet {

@@ -25,6 +25,7 @@
   -->
 <jcr:root xmlns:jcr="http://www.jcp.org/jcr/1.0" xmlns:nt="http://www.jcp.org/jcr/nt/1.0" xmlns:sling="http://sling.apache.org/jcr/sling/1.0"
           jcr:primaryType="sling:Folder"
-          jcr:title="Multi Package Update"
-          sling:resourceType="multipackageupdate/components/main"
+          jcr:title="Main Component"
+          jcr:description="Component that renders the Main Page"
+          sling:resourceSuperType="multipackageupdate/components/base"
 />
