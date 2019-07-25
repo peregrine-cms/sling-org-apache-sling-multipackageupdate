@@ -31,6 +31,7 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import javax.servlet.Servlet;
+import javax.servlet.http.HttpServletResponse;
 
 @Component(service = Servlet.class,
         property = {
@@ -49,5 +50,13 @@ public final class MultiPackageUpdateStatusServlet extends MultiPackageUpdateSer
     @Override
     protected MultiPackageUpdateResponse execute() {
         return updater.getCurrentStatus();
+    }
+
+    @Override
+    protected int getStatusCode(final MultiPackageUpdateResponse.Code code) {
+        switch (code) {
+            case UNAVAILABLE: return HttpServletResponse.SC_NO_CONTENT;
+            default: return HttpServletResponse.SC_OK;
+        }
     }
 }

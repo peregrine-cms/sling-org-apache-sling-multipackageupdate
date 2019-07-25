@@ -68,6 +68,8 @@ public abstract class MultiPackageUpdateServlet extends SlingAllMethodsServlet {
         response.setCharacterEncoding(UTF_8);
         final PrintWriter writer = response.getWriter();
         writer.write(string);
+        final int statusCode = getStatusCode(result.getCode());
+        response.setStatus(statusCode);
     }
 
     @Override
@@ -103,5 +105,7 @@ public abstract class MultiPackageUpdateServlet extends SlingAllMethodsServlet {
     }
 
     protected abstract MultiPackageUpdateResponse execute();
+
+    protected abstract int getStatusCode(MultiPackageUpdateResponse.Code code);
 
 }

@@ -31,6 +31,7 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import javax.servlet.Servlet;
+import javax.servlet.http.HttpServletResponse;
 
 @Component(service = Servlet.class,
         property = {
@@ -50,5 +51,14 @@ public final class MultiPackageUpdateStopServlet extends MultiPackageUpdateServl
     @Override
     protected MultiPackageUpdateResponse execute() {
         return updater.stop();
+    }
+
+    @Override
+    protected int getStatusCode(final MultiPackageUpdateResponse.Code code) {
+        switch (code) {
+            case AWAITING_TERMINATION: return HttpServletResponse.SC_ACCEPTED;
+            case TERMINATED: return HttpServletResponse.SC_CREATED;
+            default: return HttpServletResponse.SC_NO_CONTENT;
+        }
     }
 }

@@ -34,6 +34,7 @@ import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.metatype.annotations.Designate;
 
 import javax.servlet.Servlet;
+import javax.servlet.http.HttpServletResponse;
 
 import static com.headwire.sling.mpu.MPUConstants.PROJECT_NAME;
 
@@ -68,5 +69,13 @@ public final class MultiPackageUpdateStartServlet extends MultiPackageUpdateServ
     @Override
     protected MultiPackageUpdateResponse execute() {
         return updater.start(endpoint, SUB_SERVICE_NAME, config.maxRetriesCount());
+    }
+
+    @Override
+    protected int getStatusCode(final MultiPackageUpdateResponse.Code code) {
+        switch (code) {
+            case SCHEDULED: return HttpServletResponse.SC_CREATED;
+            default: return HttpServletResponse.SC_OK;
+        }
     }
 }

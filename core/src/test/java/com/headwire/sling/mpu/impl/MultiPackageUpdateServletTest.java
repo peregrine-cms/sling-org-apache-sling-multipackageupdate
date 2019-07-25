@@ -1,6 +1,7 @@
 package com.headwire.sling.mpu.impl;
 
 import com.headwire.sling.mpu.MPUUtil;
+import com.headwire.sling.mpu.MultiPackageUpdateResponse;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.SlingHttpServletResponse;
 import org.apache.sling.api.request.RequestPathInfo;
@@ -10,9 +11,12 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.*;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
 
 import static com.headwire.sling.mpu.MPUUtil.*;
 import static org.mockito.Mockito.*;
@@ -25,6 +29,11 @@ public final class MultiPackageUpdateServletTest {
         @Override
         protected MultiPackageUpdateResponseImpl execute() {
             return new MultiPackageUpdateResponseImpl();
+        }
+
+        @Override
+        protected int getStatusCode(final MultiPackageUpdateResponse.Code code) {
+            return HttpServletResponse.SC_OK;
         }
 
     };
