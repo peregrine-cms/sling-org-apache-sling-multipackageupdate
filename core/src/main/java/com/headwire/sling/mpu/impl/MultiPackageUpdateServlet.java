@@ -47,7 +47,7 @@ public abstract class MultiPackageUpdateServlet extends SlingAllMethodsServlet {
 
     protected static final String SERVLET_METHODS_PROPERTY_GET = SLING_SERVLET_METHODS + EQUALS + GET;
     protected static final String SERVLET_METHODS_PROPERTY_POST = SLING_SERVLET_METHODS + EQUALS + POST;
-    protected static final String RESOURCE_TYPES_PROPERTY_PREFIX = SLING_SERVLET_RESOURCE_TYPES + EQUALS + PROJECT_NAME + SLASH;
+    protected static final String RESOURCE_TYPES_PROPERTY_PREFIX = SLING_SERVLET_RESOURCE_TYPES + EQUALS + PROJECT_NAME + SLASH + COMPONENTS + SLASH;
     protected static final String SERVLET_EXTENSIONS_PROPERTY = SLING_SERVLET_EXTENSIONS + EQUALS + JSON;
 
     private final transient Gson gson = new Gson();

@@ -22,6 +22,8 @@ public final class MPUUtil {
 
     public static final String ACCEPT = "Accept";
 
+    public static final String COMPONENTS = "components";
+
     private MPUUtil() {
         throw new UnsupportedOperationException(DO_NOT_INSTANTIATE_UTIL_CLASS);
     }
