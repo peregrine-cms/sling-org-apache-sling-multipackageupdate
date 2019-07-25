@@ -1,4 +1,5 @@
-<!--/*
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
   #%L
   Multi Package Update - UI Apps
   %%
@@ -21,16 +22,11 @@
   specific language governing permissions and limitations
   under the License.
   #L%
-  */-->
-<sly data-sly-template.template="${@ action}">
-    <sly data-sly-use.model="com.headwire.sling.mpu.comps.MultiPackageUpdate${action}Model" />
-    <sly data-sly-test.result="${model.execute}" />
-    <h1>Result Code</h1>
-    <p>${result.code}</p>
-    <h1>Descriptive Status</h1>
-    <p>${result.status}</p>
-    <sly data-sly-test="${result.log}">
-        <h1>Operation Log</h1>
-        <pre>${result.log}</pre>
-    </sly>
-</sly>
+  -->
+<jcr:root xmlns:jcr="http://www.jcp.org/jcr/1.0" xmlns:nt="http://www.jcp.org/jcr/nt/1.0" xmlns:sling="http://sling.apache.org/jcr/sling/1.0"
+          jcr:primaryType="sling:Folder"
+          jcr:title="Status Component"
+          jcr:description="Displays current status"
+          sling:resourceSuperType="multipackageupdate/components/action"
+          action="Status"
+/>

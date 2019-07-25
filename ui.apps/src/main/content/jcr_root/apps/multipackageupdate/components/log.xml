@@ -1,4 +1,5 @@
-<!--/*
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
   #%L
   Multi Package Update - UI Apps
   %%
@@ -21,6 +22,11 @@
   specific language governing permissions and limitations
   under the License.
   #L%
-  */-->
-<sly data-sly-use.lib="lib.html" />
-<sly data-sly-call="${lib.template @ action='Start'}" />
+  -->
+<jcr:root xmlns:jcr="http://www.jcp.org/jcr/1.0" xmlns:nt="http://www.jcp.org/jcr/nt/1.0" xmlns:sling="http://sling.apache.org/jcr/sling/1.0"
+          jcr:primaryType="sling:Folder"
+          jcr:title="Log Component"
+          jcr:description="Displays latest log"
+          sling:resourceSuperType="multipackageupdate/components/action"
+          action="Log"
+/>
