@@ -23,9 +23,8 @@
   #L%
   */-->
 Choose one of the following options:
-<ul>
-    <li><a href="${resource.path}/start.html">Start the update</a></li>
-    <li><a href="${resource.path}/stop.html">Stop the update</a></li>
-    <li><a href="${resource.path}/status.html">Check the current status</a></li>
-    <li><a href="${resource.path}/log.html">Read the latest log</a></li>
+<ul data-sly-list="${resource.listChildren}">
+    <li data-sly-test="${item['sling:resourceType']}">
+        <a href="${item.path}.html">${item['jcr:title']}</a> (<a href="${item.path}.json">json</a>)
+    </li>
 </ul>
