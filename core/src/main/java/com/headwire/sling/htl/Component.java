@@ -11,8 +11,8 @@ import org.apache.sling.models.annotations.Model;
 @Model(adaptables = { Resource.class, SlingHttpServletRequest.class })
 public final class Component extends ResourceWrapper {
 
-    private static final String APPS_PREFIX = "/apps/";
-    private static final String LIBS_PREFIX = "/libs/";
+    protected static final String APPS_PREFIX = "/apps/";
+    protected static final String LIBS_PREFIX = "/libs/";
 
     public Component(final Resource resource) {
         super(resolveType(resource));
