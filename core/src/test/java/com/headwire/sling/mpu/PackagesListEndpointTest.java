@@ -3,7 +3,7 @@ package com.headwire.sling.mpu;
 import org.junit.Assert;
 import org.junit.Test;
 
-public class PackagesListEndpointTest {
+public final class PackagesListEndpointTest {
 
     public static final String SERVER_URL = "http://localhost:8080/content";
     public static final String PACKAGES_TXT = "packages.txt";
