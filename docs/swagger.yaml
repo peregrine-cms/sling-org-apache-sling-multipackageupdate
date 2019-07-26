@@ -1,0 +1,224 @@
+swagger: "2.0"
+info:
+  description: "This project delivers a simple servlet mechanism to perform an installation of a given list of packages in Apache Sling."
+  version: "1.0.0"
+  title: "Multi Package Update"
+  contact:
+    email: "info@headwire.com"
+  license:
+    name: "Apache 2.0"
+    url: "http://www.apache.org/licenses/LICENSE-2.0.html"
+host: "localhost:8080"
+basePath: "/bin"
+schemes:
+- "http"
+paths:
+  /mpu.html:
+    get:
+      summary: "Enter raw UI console"
+      description: "Displays simple page with links to available operations"
+      produces:
+      - "text/html"
+      responses:
+        200:
+          description: "Console is availble"
+  /mpu/start.html:
+    get:
+      summary: "Start the update process"
+      produces:
+      - "text/html"
+      responses:
+        200:
+          description: "The update process was already added, no new process has been created"
+        201:
+          description: "The update process has been added to the queue"
+  /mpu/stop.html:
+    get:
+      summary: "Stop the update process"
+      produces:
+      - "text/html"
+      responses:
+        201:
+          description: "The update process has been stopped"
+        202:
+          description: "The update process has been marked for termination"
+        204:
+          description: "There was no update process"
+  /mpu/status.html:
+    get:
+      summary: "Get the current status of a running update process"
+      produces:
+      - "text/html"
+      responses:
+        200:
+          description: "There is an update process"
+        204:
+          description: "There was no update process"
+  /mpu/log.html:
+    get:
+      summary: "Get the latest finished update process log"
+      produces:
+      - "text/html"
+      responses:
+        200:
+          description: "There is a log"
+        204:
+          description: "There was no log"
+  /mpu/start.json:
+    put:
+      summary: "Start the update process"
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "The update process was already added, no new process has been created"
+          schema:
+            $ref: "#/definitions/StartResponse"
+        201:
+          description: "The update process has been added to the queue"
+          schema:
+            $ref: "#/definitions/StartResponse"
+    get:
+      summary: "Start the update process"
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "The update process was already added, no new process has been created"
+          schema:
+            $ref: "#/definitions/StartResponse"
+        201:
+          description: "The update process has been added to the queue"
+          schema:
+            $ref: "#/definitions/StartResponse"
+  /mpu/stop.json:
+    put:
+      summary: "Stop the update process"
+      produces:
+      - "application/json"
+      responses:
+        201:
+          description: "The update process has been stopped"
+          schema:
+            $ref: "#/definitions/StopResponse"
+        202:
+          description: "The update process has been marked for termination"
+          schema:
+            $ref: "#/definitions/StopResponse"
+        204:
+          description: "There was no update process"
+    get:
+      summary: "Stop the update process"
+      produces:
+      - "application/json"
+      responses:
+        201:
+          description: "The update process has been stopped"
+          schema:
+            $ref: "#/definitions/StopResponse"
+        202:
+          description: "The update process has been marked for termination"
+          schema:
+            $ref: "#/definitions/StopResponse"
+        204:
+          description: "There was no update process"
+  /mpu/status.json:
+    get:
+      summary: "Get the current status of a running update process"
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "There is an update process"
+          schema:
+            $ref: "#/definitions/StatusResponse"
+        204:
+          description: "There was no update process"
+  /mpu/log.json:
+    get:
+      summary: "Get the latest finished update process log"
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "There is a log"
+          schema:
+            $ref: "#/definitions/LogResponse"
+        204:
+          description: "There was no log"
+definitions:
+  BasicResponse:
+    type: "object"
+    properties:
+      status:
+        type: "string"
+        description: "Human-readable description of the call result"
+      log:
+        type: "string"
+        description: "Full operation log for the developer"
+  StartResponse:
+    allOf:
+      - $ref: "#/definitions/BasicResponse"
+      - type: "object"
+        properties:
+          code:
+            type: "string"
+            description: "Encodes the operation result"
+            enum:
+            - "SCHEDULED"
+            - "WAITING"
+            - "IN_PROGRESS"
+  StopResponse:
+    allOf:
+      - $ref: "#/definitions/BasicResponse"
+      - type: "object"
+        properties:
+          code:
+            type: "string"
+            description: "Encodes the operation result"
+            enum:
+            - "AWAITING_TERMINATION"
+            - "TERMINATED"
+            - "UNAVAILABLE"
+  StatusResponse:
+    allOf:
+      - $ref: "#/definitions/BasicResponse"
+      - type: "object"
+        properties:
+          code:
+            type: "string"
+            description: "Encodes the operation result"
+            enum:
+            - "AWAITING_TERMINATION"
+            - "IN_PROGRESS"
+            - "UNAVAILABLE"
+  LogResponse:
+    allOf:
+      - $ref: "#/definitions/BasicResponse"
+      - type: "object"
+        properties:
+          code:
+            type: "string"
+            description: "Encodes the operation result"
+            enum:
+            - "AVAILABLE"
+            - "UNAVAILABLE"
+  FullResponse:
+    allOf:
+      - $ref: "#/definitions/BasicResponse"
+      - type: "object"
+        properties:
+          code:
+            type: "string"
+            description: "Encodes the operation result"
+            enum:
+            - "SCHEDULED"
+            - "WAITING"
+            - "IN_PROGRESS"
+            - "AWAITING_TERMINATION"
+            - "TERMINATED"
+            - "AVAILABLE"
+            - "UNAVAILABLE"
+externalDocs:
+  description: "Find out more about Multi Package Update"
+  url: "https://github.com/peregrine-cms/sling-org-apache-sling-multipackageupdate"
