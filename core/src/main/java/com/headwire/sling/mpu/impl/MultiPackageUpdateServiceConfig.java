@@ -28,15 +28,35 @@ package com.headwire.sling.mpu.impl;
 import org.osgi.service.metatype.annotations.AttributeDefinition;
 import org.osgi.service.metatype.annotations.ObjectClassDefinition;
 
+/**
+ * An <code>@interface</code> that contains configuration of the endpoint
+ * that exposes the packages. It also allows to control
+ * the download + upload + install process in regards to how many times
+ * it will be retried.
+ */
 @ObjectClassDefinition(name = "%config.name", description = "%config.description")
 public @interface MultiPackageUpdateServiceConfig {
 
+	/**
+	 * @return the common path prefix to all packages and their listing file.
+	 * Will be ignored for the paths that are absolute, i.e. that start with
+	 * <code>http</code> or <code>https</code>.
+	 */
 	@AttributeDefinition(name = "%serverUrl.name", description = "%serverUrl.description")
 	String serverUrl();
 
+	/**
+	 * @return the path to the packages listing file. Can be absolute (i.e. start with
+	 * <code>http</code> or <code>https</code>) or relative (and then - will be prefixed
+	 * with <code>serverUrl</code>).
+	 */
 	@AttributeDefinition(name = "%filename.name", description = "%filename.description")
 	String filename() default "packages.txt";
 
+	/**
+	 * @return how many times the download + upload + install process will be replayed in case
+	 * of failures.
+	 */
 	@AttributeDefinition(name = "%maxRetriesCount.name", description = "%maxRetriesCount.description")
 	int maxRetriesCount() default 1;
 }

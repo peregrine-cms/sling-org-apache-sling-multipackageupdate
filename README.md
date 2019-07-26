@@ -6,7 +6,7 @@ This project delivers a simple servlet mechanism to perform an installation of a
 
 #### Usage
 
-The servlets are exposed under [/bin/mpu](http://localhost:8080/bin/browser.html/bin/mpu) and are the following:
+The servlets are exposed under [/bin/mpu](http://localhost:8080/bin/mpu.html) and are the following:
 - [`/bin/mpu/start`](http://localhost:8080/bin/mpu/start.json): to trigger the multi-package update process,
 - [`/bin/mpu/stop`](http://localhost:8080/bin/mpu/stop.json): to stop the current update thread
 (if there is one running),
@@ -14,10 +14,15 @@ The servlets are exposed under [/bin/mpu](http://localhost:8080/bin/browser.html
 to see the current status (if there is a thread running),
 - [`/bin/mpu/log`](http://localhost:8080/bin/mpu/log.json): to check the last log message.
 
+They are all available as both `json` and `html`.
+
 #### Configuration
 
 The main required configuration is that of
 [com.headwire.sling.mpu.impl.MultiPackageUpdateService](http://localhost:8080/system/console/configMgr/com.headwire.sling.mpu.impl.MultiPackageUpdateService):
+
+![MultiPackageUpdateService](docs/img/MultiPackageUpdateService.png)
+
 - **Server with Packages**: the full `URL` of the location of both packages and the listing file from below.
 An example value could be `http://localhost:8080/content`,
 - **Packages List File Name**: the name of a text file, located under the above path, containing
