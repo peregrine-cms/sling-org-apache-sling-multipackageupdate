@@ -5,19 +5,18 @@ import com.headwire.sling.mpu.MultiPackageUpdate.Operation;
 import com.headwire.sling.mpu.MultiPackageUpdateResponse.Code;
 import org.osgi.service.component.annotations.Component;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.EnumMap;
 
 import static javax.servlet.http.HttpServletResponse.*;
 
 @Component(service = { HttpStatusCodeMapper.class })
 public final class HttpStatusCodeMapperService implements HttpStatusCodeMapper {
 
-    private final Map<Operation, Map<Code, Integer>> mappings = new HashMap<>();
+    private final EnumMap<Operation, EnumMap<Code, Integer>> mappings = new EnumMap<>(Operation.class);
 
     public HttpStatusCodeMapperService() {
         for (final Operation operation : Operation.class.getEnumConstants()) {
-            mappings.put(operation, new HashMap<>());
+            mappings.put(operation, new EnumMap<>(Code.class));
         }
 
         map(Operation.START, Code.SCHEDULED, SC_CREATED);
