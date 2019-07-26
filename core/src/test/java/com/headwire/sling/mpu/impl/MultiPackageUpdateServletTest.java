@@ -56,19 +56,25 @@ public final class MultiPackageUpdateServletTest {
                 .thenReturn(writer);
         when(request.getRequestPathInfo())
                 .thenReturn(pathInfo);
+        when(request.getHeaders(ACCEPT))
+                .thenReturn(Collections.emptyEnumeration());
+    }
+
+    private void doPostAndVerify(final String contentType, final int wantedNumberOfInvocations) throws IOException {
+        model.doPost(request, response);
+        verify(response, times(wantedNumberOfInvocations)).setContentType(contentType);
+        verify(writer, times(wantedNumberOfInvocations)).write(anyString());
     }
 
     private void doPostAndVerify(final String contentType) throws IOException {
-        model.doPost(request, response);
-        verify(response).setContentType(contentType);
-        verify(writer).write(anyString());
+        doPostAndVerify(contentType, 1);
     }
 
     @Test
     public void htmlExtension() throws IOException {
         when(pathInfo.getExtension())
                 .thenReturn(HTML);
-        doPostAndVerify(TEXT_HTML);
+        doPostAndVerify(TEXT_HTML, 0);
     }
 
     @Test
@@ -82,7 +88,7 @@ public final class MultiPackageUpdateServletTest {
     public void htmlAcceptHeader() throws IOException {
         when(request.getHeader(ACCEPT))
                 .thenReturn(TEXT_HTML);
-        doPostAndVerify(TEXT_HTML);
+        doPostAndVerify(TEXT_HTML, 0);
     }
 
     @Test
@@ -93,14 +99,12 @@ public final class MultiPackageUpdateServletTest {
         headers.add(APPLICATION_JSON);
         when(request.getHeaders(ACCEPT))
                 .thenReturn(Collections.enumeration(headers));
-        doPostAndVerify(TEXT_HTML);
+        doPostAndVerify(APPLICATION_JSON);
     }
 
     @Test
-    public void jsonDefault() throws IOException {
-        when(request.getHeaders(ACCEPT))
-                .thenReturn(Collections.emptyEnumeration());
-        doPostAndVerify(APPLICATION_JSON);
+    public void nothingDefault() throws IOException {
+        doPostAndVerify(APPLICATION_JSON, 0);
     }
 
 }

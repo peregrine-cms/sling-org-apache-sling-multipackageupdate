@@ -4,7 +4,7 @@ public final class MPUUtil {
 
     public static final String DO_NOT_INSTANTIATE_UTIL_CLASS = "Util classes cannot be instantiated";
 
-    public static final String EQUALS = "=";
+    public static final String EQUAL = "=";
     public static final String SLASH = "/";
 
     public static final String GET = "GET";

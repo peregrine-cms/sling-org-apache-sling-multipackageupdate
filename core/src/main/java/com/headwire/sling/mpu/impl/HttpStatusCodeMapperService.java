@@ -5,54 +5,44 @@ import com.headwire.sling.mpu.MultiPackageUpdate.Operation;
 import com.headwire.sling.mpu.MultiPackageUpdateResponse.Code;
 import org.osgi.service.component.annotations.Component;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import static javax.servlet.http.HttpServletResponse.*;
 
 @Component(service = { HttpStatusCodeMapper.class })
 public final class HttpStatusCodeMapperService implements HttpStatusCodeMapper {
 
+    private final Map<Operation, Map<Code, Integer>> mappings = new HashMap<>();
+
+    public HttpStatusCodeMapperService() {
+        for (final Operation operation : Operation.class.getEnumConstants()) {
+            mappings.put(operation, new HashMap<>());
+        }
+
+        map(Operation.START, Code.SCHEDULED, SC_CREATED);
+        map(Operation.START, Code.WAITING, SC_OK);
+        map(Operation.START, Code.IN_PROGRESS, SC_OK);
+
+        map(Operation.STOP, Code.AWAITING_TERMINATION, SC_ACCEPTED);
+        map(Operation.STOP, Code.TERMINATED, SC_CREATED);
+        map(Operation.STOP, Code.UNAVAILABLE, SC_NO_CONTENT);
+
+        map(Operation.CURRENT_STATUS, Code.UNAVAILABLE, SC_NO_CONTENT);
+        map(Operation.CURRENT_STATUS, Code.AWAITING_TERMINATION, SC_OK);
+        map(Operation.CURRENT_STATUS, Code.IN_PROGRESS, SC_OK);
+
+        map(Operation.LAST_LOG_TEXT, Code.AVAILABLE, SC_OK);
+        map(Operation.LAST_LOG_TEXT, Code.UNAVAILABLE, SC_NO_CONTENT);
+    }
+
+    private void map(final Operation operation, final Code code, final int result) {
+        mappings.get(operation).put(code, result);
+    }
+
     @Override
     public int getStatusCode(final Operation operation, final Code code) {
-        switch (operation) {
-            case START: return getStatusCodeForStartOperation(code);
-            case STOP: return getStatusCodeForStopOperation(code);
-            case CURRENT_STATUS: return getStatusCodeForStatusOperation(code);
-            case LAST_LOG_TEXT: return getStatusCodeForLogOperation(code);
-        }
-
-        return SC_INTERNAL_SERVER_ERROR;
-    }
-
-    public int getStatusCodeForStartOperation(final Code code) {
-        if (code == Code.SCHEDULED) {
-            return SC_CREATED;
-        }
-
-        return SC_OK;
-    }
-
-    public int getStatusCodeForStopOperation(final Code code) {
-        switch (code) {
-            case AWAITING_TERMINATION: return SC_ACCEPTED;
-            case TERMINATED: return SC_CREATED;
-        }
-
-        return SC_NO_CONTENT;
-    }
-
-    public int getStatusCodeForStatusOperation(final Code code) {
-        if (code == Code.UNAVAILABLE) {
-            return SC_NO_CONTENT;
-        }
-
-        return SC_OK;
-    }
-
-    public int getStatusCodeForLogOperation(final Code code) {
-        if (code == Code.AVAILABLE) {
-            return SC_OK;
-        }
-
-        return SC_NO_CONTENT;
+        return mappings.get(operation).getOrDefault(code, SC_INTERNAL_SERVER_ERROR);
     }
 
 }

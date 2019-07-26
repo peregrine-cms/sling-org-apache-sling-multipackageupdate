@@ -2,6 +2,7 @@ package com.headwire.sling.htl;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.sling.api.SlingHttpServletRequest;
+import org.apache.sling.api.resource.NonExistingResource;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.api.resource.ResourceWrapper;
@@ -21,16 +22,29 @@ public final class Component extends ResourceWrapper {
         this(request.getResource());
     }
 
-    public static Resource resolveType(final Resource resource) {
-        final ResourceResolver resourceResolver = resource.getResourceResolver();
+    private static Resource resolveType(final Resource resource) {
         final String resourceType = resource.getResourceType();
-        if (StringUtils.startsWithAny(resourceType, APPS_PREFIX, LIBS_PREFIX)) {
-            return resourceResolver.getResource(resourceType);
+        final ResourceResolver resourceResolver = resource.getResourceResolver();
+        if (StringUtils.isBlank(resourceType)) {
+            return new NonExistingResource(resourceResolver, resourceType);
         }
 
-        final Resource type = resourceResolver.getResource(APPS_PREFIX + resourceType);
+        Resource type = null;
+        if (StringUtils.startsWithAny(resourceType, APPS_PREFIX, LIBS_PREFIX)) {
+            type = resourceResolver.getResource(resourceType);
+        }
+
+        final String appsResourceType = APPS_PREFIX + resourceType;
         if (type == null) {
-            return resourceResolver.getResource(LIBS_PREFIX + resourceType);
+            type = resourceResolver.getResource(appsResourceType);
+        }
+
+        if (type == null) {
+            type = resourceResolver.getResource(LIBS_PREFIX + resourceType);
+        }
+
+        if (type == null) {
+            return new NonExistingResource(resourceResolver, appsResourceType);
         }
 
         return type;

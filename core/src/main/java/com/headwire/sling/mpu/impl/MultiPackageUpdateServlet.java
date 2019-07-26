@@ -45,10 +45,10 @@ public abstract class MultiPackageUpdateServlet extends SlingAllMethodsServlet {
 
     private static final long serialVersionUID = -1704915461516132101L;
 
-    protected static final String SERVLET_METHODS_PROPERTY_GET = SLING_SERVLET_METHODS + EQUALS + GET;
-    protected static final String SERVLET_METHODS_PROPERTY_POST = SLING_SERVLET_METHODS + EQUALS + POST;
-    protected static final String RESOURCE_TYPES_PROPERTY_PREFIX = SLING_SERVLET_RESOURCE_TYPES + EQUALS + PROJECT_NAME + SLASH + COMPONENTS + SLASH;
-    protected static final String SERVLET_EXTENSIONS_PROPERTY = SLING_SERVLET_EXTENSIONS + EQUALS + JSON;
+    protected static final String SERVLET_METHODS_PROPERTY_GET = SLING_SERVLET_METHODS + EQUAL + GET;
+    protected static final String SERVLET_METHODS_PROPERTY_POST = SLING_SERVLET_METHODS + EQUAL + POST;
+    protected static final String RESOURCE_TYPES_PROPERTY_PREFIX = SLING_SERVLET_RESOURCE_TYPES + EQUAL + PROJECT_NAME + SLASH + COMPONENTS + SLASH;
+    protected static final String SERVLET_EXTENSIONS_PROPERTY = SLING_SERVLET_EXTENSIONS + EQUAL + JSON;
 
     private final transient Gson gson = new Gson();
 
@@ -56,20 +56,15 @@ public abstract class MultiPackageUpdateServlet extends SlingAllMethodsServlet {
     protected void doGet(final SlingHttpServletRequest request, final SlingHttpServletResponse response)
             throws IOException {
         final MultiPackageUpdateResponse result = execute();
-        final String string;
-        if (acceptsHtml(request)) {
-            response.setContentType(TEXT_HTML);
-            string = "<html><head><title>" + result.getStatus() + "</title></head><body><pre>" + result.getLog() + "</pre></body></html>";
-        } else {
+        if (acceptsJson(request)) {
             response.setContentType(APPLICATION_JSON);
-            string = gson.toJson(result);
+            response.setCharacterEncoding(UTF_8);
+            final PrintWriter writer = response.getWriter();
+            final String string = gson.toJson(result);
+            writer.write(string);
+            final int statusCode = getStatusCode(result.getCode());
+            response.setStatus(statusCode);
         }
-
-        response.setCharacterEncoding(UTF_8);
-        final PrintWriter writer = response.getWriter();
-        writer.write(string);
-        final int statusCode = getStatusCode(result.getCode());
-        response.setStatus(statusCode);
     }
 
     @Override
@@ -78,25 +73,17 @@ public abstract class MultiPackageUpdateServlet extends SlingAllMethodsServlet {
         doGet(request, response);
     }
 
-    private boolean acceptsHtml(final SlingHttpServletRequest request) {
+    private boolean acceptsJson(final SlingHttpServletRequest request) {
         final RequestPathInfo pathInfo = request.getRequestPathInfo();
         final String extension = pathInfo.getExtension();
-        if (StringUtils.equalsIgnoreCase(extension, HTML)) {
-            return true;
-        }
-
         if (StringUtils.equalsIgnoreCase(extension, JSON)) {
-            return false;
-        }
-
-        if (StringUtils.equalsIgnoreCase(request.getHeader(ACCEPT), TEXT_HTML)) {
             return true;
         }
 
         final Enumeration<?> acceptHeaders = request.getHeaders(ACCEPT);
         while (acceptHeaders.hasMoreElements()) {
             final String element = String.valueOf(acceptHeaders.nextElement());
-            if (StringUtils.equalsIgnoreCase(element, TEXT_HTML)) {
+            if (StringUtils.equalsIgnoreCase(element, APPLICATION_JSON)) {
                 return true;
             }
         }

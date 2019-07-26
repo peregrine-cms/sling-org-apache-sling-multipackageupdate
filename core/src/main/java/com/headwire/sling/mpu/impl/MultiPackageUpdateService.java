@@ -25,14 +25,17 @@ package com.headwire.sling.mpu.impl;
  * #L%
  */
 
-import com.headwire.sling.mpu.*;
+import com.headwire.sling.mpu.MultiPackageUpdate;
+import com.headwire.sling.mpu.MultiPackageUpdateResponse.Code;
+import com.headwire.sling.mpu.PackagesListEndpoint;
+import com.headwire.sling.mpu.ProcessPerformer;
+import com.headwire.sling.mpu.ProcessPerformerListener;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.sling.event.jobs.Job;
 import org.apache.sling.event.jobs.JobManager;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
-import com.headwire.sling.mpu.MultiPackageUpdateResponse.Code;
 import org.osgi.service.metatype.annotations.Designate;
 
 import java.util.HashMap;
