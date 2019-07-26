@@ -18,7 +18,8 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public final class ComponentTest {
 
-    public static final String RESOURCE_TYPE = "my-app/component";
+    private static final String RESOURCE_TYPE = "my-app/component";
+
     @Mock
     private SlingHttpServletRequest request;
 

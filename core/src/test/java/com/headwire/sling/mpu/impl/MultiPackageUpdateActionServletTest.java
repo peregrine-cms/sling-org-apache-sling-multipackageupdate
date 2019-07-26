@@ -14,12 +14,12 @@ public abstract class MultiPackageUpdateActionServletTest<ServletType extends Mu
 
     private final ServletType model;
 
+    @Mock
+    private MultiPackageUpdate updater;
+
     public MultiPackageUpdateActionServletTest(final ServletType model) {
         this.model = model;
     }
-
-    @Mock
-    private MultiPackageUpdate updater;
 
     @Before
     public final void setUp() throws NoSuchFieldException {
