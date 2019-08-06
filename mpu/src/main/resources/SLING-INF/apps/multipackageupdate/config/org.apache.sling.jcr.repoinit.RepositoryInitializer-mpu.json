@@ -1,0 +1,9 @@
+{
+    "jcr:primaryType": "sling:OsgiConfig",
+    "scripts": [
+        "create service user sling-multipackageupdate",
+        "set ACL for sling-multipackageupdate\nallow jcr:all on /\nend",
+        "create path /bin/mpu(sling:OrderedFolder mixin rep:AccessControllable)",
+        "set ACL for everyone\ndeny jcr:all on /bin/mpu\nend"
+    ]
+}

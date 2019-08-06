@@ -36,7 +36,7 @@
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 
-	<artifactId>ui.content</artifactId>
+	<artifactId>mpu.ui.content</artifactId>
 	<packaging>content-package</packaging>
 
 	<name>Multi Package Update - Sample Content</name>

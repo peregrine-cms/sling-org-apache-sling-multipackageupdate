@@ -1,0 +1,5 @@
+{
+    "jcr:primaryType" : "sling:OrderedFolder",
+    "jcr:title": "Multi Package Update",
+    "sling:resourceType": "multipackageupdate/components/main"
+}

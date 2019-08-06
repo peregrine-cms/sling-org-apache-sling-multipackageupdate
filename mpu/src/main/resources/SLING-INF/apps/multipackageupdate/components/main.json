@@ -1,0 +1,6 @@
+{
+    "jcr:primaryType": "sling:Folder",
+    "jcr:title": "Main Component",
+    "jcr:description": "Component that renders the Main Page",
+    "sling:resourceSuperType": "multipackageupdate/components/base"
+}

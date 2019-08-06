@@ -1,0 +1,7 @@
+{
+    "jcr:primaryType" : "sling:Folder",
+    "jcr:title": "Stop Component",
+    "jcr:description": "Stops Update",
+    "sling:resourceSuperType": "multipackageupdate/components/action",
+    "action": "Stop"
+}

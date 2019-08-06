@@ -1,0 +1,5 @@
+{
+  "jcr:primaryType": "sling:Folder",
+  "jcr:title": "Start the update",
+  "sling:resourceType": "multipackageupdate/components/start"
+}

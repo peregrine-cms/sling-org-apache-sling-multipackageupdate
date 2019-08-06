@@ -1,0 +1,7 @@
+{
+    "jcr:primaryType" : "sling:Folder",
+    "jcr:title": "Log Component",
+    "jcr:description": "Displays latest log",
+    "sling:resourceSuperType": "multipackageupdate/components/action",
+    "action": "Log"
+}

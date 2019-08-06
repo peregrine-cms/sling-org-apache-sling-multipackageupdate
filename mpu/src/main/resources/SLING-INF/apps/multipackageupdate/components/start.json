@@ -1,0 +1,7 @@
+{
+    "jcr:primaryType" : "sling:Folder",
+    "jcr:title": "Starts Component",
+    "jcr:description": "Starts Update",
+    "sling:resourceSuperType": "multipackageupdate/components/action",
+    "action": "Start"
+}

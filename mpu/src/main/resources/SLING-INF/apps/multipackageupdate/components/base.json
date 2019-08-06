@@ -1,0 +1,5 @@
+{
+    "jcr:primaryType" : "sling:Folder",
+    "jcr:title": "Base Component",
+    "jcr:description": "Super Type for all other components"
+}

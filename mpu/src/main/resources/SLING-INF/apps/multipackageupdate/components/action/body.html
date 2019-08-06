@@ -1,7 +1,6 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!--
+<!--/*
   #%L
-  Multi Package Update - UI Content
+  Multi Package Update - UI Apps
   %%
   Copyright (C) 2017 headwire inc.
   %%
@@ -22,9 +21,18 @@
   specific language governing permissions and limitations
   under the License.
   #L%
-  -->
-<workspaceFilter version="1.0">
-<!--    <filter root="/apps/multipackageupdate/config" />-->
-    <filter root="/apps/mpu-content/config" />
-    <filter root="/content/multipackageupdate" />
-</workspaceFilter>
+  */-->
+<header>
+    <a href="${resource.parent.path}.html">Home</a>
+</header>
+<sly data-sly-use.component="com.headwire.sling.htl.Component" />
+<sly data-sly-use.model="com.headwire.sling.mpu.comps.MultiPackageUpdate${component.action}Model" />
+<sly data-sly-test.result="${model.execute}" />
+<h1>Result Code</h1>
+<p>${result.code}</p>
+<h1>Descriptive Status</h1>
+<p>${result.action}</p>
+<sly data-sly-test="${result.log}">
+    <h1>Operation Log</h1>
+    <pre>${result.log}</pre>
+</sly>

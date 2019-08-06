@@ -1,0 +1,6 @@
+{
+  "jcr:primaryType": "sling:OsgiConfig",
+  "user.mapping": [
+    "com.headwire.sling.multipackageupdate:multipackageupdate=sling-multipackageupdate"
+  ]
+}

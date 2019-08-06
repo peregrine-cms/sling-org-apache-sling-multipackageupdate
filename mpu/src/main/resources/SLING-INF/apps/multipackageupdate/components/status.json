@@ -1,0 +1,7 @@
+{
+    "jcr:primaryType" : "sling:Folder",
+    "jcr:title": "Status Component",
+    "jcr:description": "Displays current status",
+    "sling:resourceSuperType": "multipackageupdate/components/action",
+    "action": "Status"
+}

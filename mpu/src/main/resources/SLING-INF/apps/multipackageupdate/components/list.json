@@ -1,0 +1,7 @@
+{
+    "jcr:primaryType" : "sling:Folder",
+    "jcr:title": "List Component",
+    "jcr:description": "Displays all configured Endpoints",
+    "sling:resourceSuperType": "multipackageupdate/components/action",
+    "action": "List"
+}

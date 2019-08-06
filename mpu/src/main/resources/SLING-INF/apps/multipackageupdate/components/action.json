@@ -1,0 +1,6 @@
+{
+    "jcr:primaryType" : "sling:Folder",
+    "jcr:title": "Action Component",
+    "jcr:description": "Super Type for all action components",
+    "jcr:resourceSuperType": "multipackageupdate/components/base"
+}
